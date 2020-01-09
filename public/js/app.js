@@ -2006,13 +2006,48 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   data: function data() {
-    return {
-      sortedDice: 8
-    };
+    return {};
   },
   computed: {
-    sortDice: function sortDice() {
-      return this.dice.sort();
+    counter: function counter() {
+      return this.dice.reduce(function (acc, die) {
+        if (!acc[die]) acc[die] = 0;
+        acc[die]++;
+        return acc;
+      }, {});
+    },
+    threeOfAKind: function threeOfAKind() {
+      // var counts = Array(6).fill(0);
+      // this.dice.forEach(dice => {
+      //   counts[dice - 1]++;
+      // });
+      var z = "";
+
+      for (var key in this.counter) {
+        if (this.counter[key] >= 3) {
+          z = key * this.counter[key];
+        }
+      } // couts.forEach((count, index) => {
+      // for (let index = 0; index < diceLength; index++) {
+      //   if (this.counter[index] >= 3) {
+      //     alert(counter[index]);
+      // z = [index + 1] * this.counter[index];
+      // }
+      // }
+
+
+      return z;
+    },
+    fourOfAKind: function fourOfAKind() {},
+    fullHouse: function fullHouse() {},
+    smallStreet: function smallStreet() {},
+    largeStreet: function largeStreet() {},
+    yahtzee: function yahtzee() {},
+    chance: function chance() {
+      return this.dice.reduce(function (acc, die) {
+        acc += die;
+        return acc;
+      });
     }
   }
 });
@@ -38305,7 +38340,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s("."))
+          _vm._v(_vm._s(_vm.counter[1] || "."))
         ])
       ]),
       _vm._v(" "),
@@ -38313,7 +38348,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s())
+          _vm._v(_vm._s(_vm.dice.length ? _vm.threeOfAKind : ""))
         ])
       ])
     ]),
@@ -38325,7 +38360,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s("."))
+          _vm._v(_vm._s(_vm.counter[2] * 2 || "."))
         ])
       ]),
       _vm._v(" "),
@@ -38345,7 +38380,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s("."))
+          _vm._v(_vm._s(_vm.counter[3] * 3 || "."))
         ])
       ]),
       _vm._v(" "),
@@ -38365,7 +38400,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s("."))
+          _vm._v(_vm._s(_vm.counter[4] * 4 || "."))
         ])
       ]),
       _vm._v(" "),
@@ -38385,7 +38420,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s("."))
+          _vm._v(_vm._s(_vm.counter[5] * 5 || "."))
         ])
       ]),
       _vm._v(" "),
@@ -38405,7 +38440,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s("."))
+          _vm._v(_vm._s(_vm.counter[6] * 6 || "."))
         ])
       ]),
       _vm._v(" "),
@@ -38413,7 +38448,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s())
+          _vm._v(_vm._s(this.counter))
         ])
       ])
     ]),
@@ -38433,7 +38468,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s())
+          _vm._v(_vm._s(_vm.dice.length ? _vm.chance : ""))
         ])
       ])
     ]),
@@ -38458,7 +38493,7 @@ var render = function() {
               staticClass: "mb-0 text-center",
               staticStyle: { "border-left": "3px solid red" }
             },
-            [_vm._v(_vm._s(_vm.dice.sort()))]
+            [_vm._v(_vm._s("."))]
           )
         ])
       ]
