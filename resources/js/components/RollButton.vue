@@ -4,8 +4,8 @@
       :style="buttonStyling"
       class="btn btn-primary w-25"
       @click="rollDice"
-      :disabled="rollButtonIsDisabled"
-      v-bind:class="{ disabledButton: rollButtonIsDisabled }"
+      :disabled="rollnr === 3 || settedValue === 1"
+      v-bind:class="{ disabledButton: rollnr === 3 }"
       ref="button"
     >
       <pre class="mb-0" :style="rollButtonTextStyle">ROLL [<span style="color: red;">{{ rollnr >= 1 ? 'X' : ' ' }}</span>] [<span style="color: red;">{{ rollnr >= 2 ? 'X' : ' ' }}</span>] [<span style="color: red;">{{ rollnr == 3 ? 'X' : ' ' }}</span>]</pre>
@@ -15,10 +15,10 @@
       :style="buttonStyling2"
       class="btn btn-danger w-25 mt-3"
       @click="playAgain"
-      v-show="rollnr == 3"
+      v-show="rollnr === 3 || settedValue === 1"
       :disabled="playAgainButtonIsDisabled"
     >
-      <pre class="mb-0" :style="playAgainButtonTextStyle">{{ againBtnTxt }}</pre>
+      <pre class="mb-0" :style="playAgainButtonTextStyle">{{ settedValue === 1 ? againBtnTxt : placeBtnTxt }}</pre>
     </button>
   </div>
 </template>
@@ -26,7 +26,7 @@
 <script>
 export default {
   props: {
-    placingValue: Number,
+    settedValue: Number,
     settedDice: {
       type: Array,
       required: true
@@ -34,7 +34,8 @@ export default {
   },
   data() {
     return {
-      againBtnTxt: "Place Value",
+      againBtnTxt: "Next Round!",
+      placeBtnTxt: "Set Value",
       buttonStyles: {
         border: "5px solid black",
         fontSize: "2rem",
@@ -42,24 +43,21 @@ export default {
         fontWeight: 600
       },
       diceData: [],
-      rollButtonIsDisabled: this.rollnr === 3,
-      playAgainButtonIsDisabled: this.placingValue,
+      playAgainButtonIsDisabled: true,
       rollnr: 0
     };
   },
   methods: {
+    // For testing
     rollDice2() {
       this.diceData = [];
-      this.diceData.push(2, 5, 1, 3, 4);
+      this.diceData.push(2, 2, 2, 2, 2);
       this.$emit("diceToParent", this.diceData);
     },
     rollDice() {
       const arr = [...this.diceData];
       this.diceData = [];
       this.rollnr++;
-      //   if (this.rollnr == 3) {
-      //     this.rollButtonIsDisabled = true;
-      //   }
       for (let index = 0; index < 5; index++) {
         if (this.settedDice.includes(index)) {
           this.diceData.push(arr[index]);
@@ -69,20 +67,20 @@ export default {
         }
       }
       this.$emit("diceToParent", this.diceData);
-      this.$refs.button.blur();
     },
     playAgain() {
       this.diceData = [];
       this.rollnr = 0;
-      //   this.rollButtonIsDisabled = false;
       this.$emit("diceToParent", this.diceData);
+      this.$emit("unsetValue");
     }
   },
   computed: {
     buttonStyling() {
       return {
         fontSize: this.buttonStyles.fontSize,
-        cursor: this.rollnr === 3 ? "default" : "pointer",
+        cursor:
+          this.rollnr === 3 || this.settedValue === 1 ? "default" : "pointer",
         border:
           this.rollnr === 3 ? "5px dotted black" : this.buttonStyles.border
       };
@@ -90,8 +88,8 @@ export default {
     buttonStyling2() {
       return {
         border: this.buttonStyles.border,
-        fontSize: this.buttonStyles.fontSize
-        // cursor: this.rollnr === 3 ? "default" : "pointer"
+        fontSize: this.buttonStyles.fontSize,
+        cursor: this.playAgainButtonIsDisabled ? "default" : "pointer"
       };
     },
     playAgainButtonTextStyle() {
@@ -105,6 +103,15 @@ export default {
         color: this.rollnr === 3 ? "black" : "white",
         fontweight: 600
       };
+    }
+  },
+  watch: {
+    settedValue: function(newValue) {
+      if (newValue === 1) {
+        this.playAgainButtonIsDisabled = false;
+      } else {
+        this.playAgainButtonIsDisabled = true;
+      }
     }
   }
 };

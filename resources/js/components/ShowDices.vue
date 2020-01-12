@@ -62,7 +62,7 @@ export default {
     }
   },
   watch: {
-    dice: function(old) {
+    dice: function(newValue) {
       if (!this.dice.length) {
         this.diceOnHold = [];
       }

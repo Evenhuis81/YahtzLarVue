@@ -1,8 +1,13 @@
 <template>
   <div>
-    <results-table :dice="diceData"></results-table>
+    <results-table :dice="diceData" v-on:valueSetted="onSetValue"></results-table>
     <show-dices :dice="diceData" v-on:settedDiceToParent="onSetDice"></show-dices>
-    <roll-button v-on:diceToParent="onRollDice" :settedDice="settedDice"></roll-button>
+    <roll-button
+      v-on:diceToParent="onRollDice"
+      :settedDice="settedDice"
+      :settedValue="settedValue"
+      v-on:unsetValue="onUnsetValue"
+    ></roll-button>
   </div>
 </template>
 
@@ -10,6 +15,7 @@
 export default {
   data() {
     return {
+      settedValue: 0,
       settedDice: [],
       diceData: []
     };
@@ -24,6 +30,12 @@ export default {
     },
     onSetDice(value) {
       this.settedDice = value;
+    },
+    onSetValue() {
+      this.settedValue = 1;
+    },
+    onUnsetValue() {
+      this.settedValue = 0;
     }
   }
 };

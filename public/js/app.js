@@ -1846,9 +1846,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      settedValue: 0,
       settedDice: [],
       diceData: []
     };
@@ -1863,6 +1869,12 @@ __webpack_require__.r(__webpack_exports__);
     },
     onSetDice: function onSetDice(value) {
       this.settedDice = value;
+    },
+    onSetValue: function onSetValue() {
+      this.settedValue = 1;
+    },
+    onUnsetValue: function onUnsetValue() {
+      this.settedValue = 0;
     }
   }
 });
@@ -2018,6 +2030,16 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     dice: {
@@ -2027,15 +2049,28 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   },
   data: function data() {
     return {
+      hoverYaht: "",
       yahtzeeArray: ["Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", "Three of a Kind", "Four of a Kind", "Full House", "Small Street", "Large Street", "Yahtzee", "Chance", "Section Bonus (+35%)"],
       yahtzeeObject: {},
-      settedColorChance: "red"
+      settedColor: "black",
+      defaultColor: "red"
     };
   },
   computed: {
+    totalSettedValue: function totalSettedValue() {
+      var _this = this;
+
+      var total = 0;
+      Object.keys(this.yahtzeeObject).forEach(function (key) {
+        if (_this.yahtzeeObject[key] != "0") {
+          total += _this.yahtzeeObject[key];
+        }
+      });
+      return total;
+    },
     createY: function createY() {
       return this.yahtzeeArray.reduce(function (acc, elem) {
-        acc[elem] = "";
+        acc[elem] = null;
         return acc;
       }, {});
     },
@@ -2053,7 +2088,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
       }
 
-      return "";
+      return null;
     },
     fourOfAKind: function fourOfAKind() {
       for (var key in this.counter) {
@@ -2062,7 +2097,16 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
       }
 
-      return "";
+      return null;
+    },
+    yahtzee: function yahtzee() {
+      for (var key in this.counter) {
+        if (this.counter[key] === 5) {
+          return true;
+        }
+      }
+
+      return null;
     },
     fullHouse: function fullHouse() {
       for (var key in this.counter) {
@@ -2074,6 +2118,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           }
         }
       }
+
+      return null;
     },
     street: function street() {
       var maxS = 0;
@@ -2093,32 +2139,31 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       return maxS;
     },
-    yahtzee: function yahtzee() {
-      for (var key in this.counter) {
-        if (this.counter[key] === 5) {
-          return 50;
-        }
-      }
-    },
     chance: function chance() {
       if (this.dice.length) {
         return this.dice.reduce(function (acc, die) {
           return acc + die;
         });
       } else {
-        return false;
+        return null;
       }
-    },
-    setcolor: function setcolor() {
-      return {
-        color: this.settedColorChance
-      };
     }
   },
   methods: {
-    setChance: function setChance() {
-      this.settedColorChance = "Black";
-      this.yahtzeeObject["Chance"] = this.chance;
+    setColor: function setColor(para) {
+      return {
+        color: this.yahtzeeObject[para] ? this.settedColor : this.defaultColor
+      };
+    },
+    setVal: function setVal(para) {
+      if (para == "Chance") {
+        this.yahtzeeObject[para] = this.chance;
+      } else if (para == "Yahtzee") {
+        this.yahtzee ? this.yahtzeeObject[para] = 50 : this.yahtzeeObject[para] = "0";
+      }
+
+      this.$emit("valueSetted");
+      this.hoverYaht = "";
     }
   },
   mounted: function mounted() {
@@ -2172,7 +2217,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    placingValue: Number,
+    settedValue: Number,
     settedDice: {
       type: Array,
       required: true
@@ -2180,7 +2225,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   },
   data: function data() {
     return {
-      againBtnTxt: "Place Value",
+      againBtnTxt: "Next Round!",
+      placeBtnTxt: "Set Value",
       buttonStyles: {
         border: "5px solid black",
         fontSize: "2rem",
@@ -2188,24 +2234,22 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         fontWeight: 600
       },
       diceData: [],
-      rollButtonIsDisabled: this.rollnr === 3,
-      playAgainButtonIsDisabled: this.placingValue,
+      playAgainButtonIsDisabled: true,
       rollnr: 0
     };
   },
   methods: {
+    // For testing
     rollDice2: function rollDice2() {
       this.diceData = [];
-      this.diceData.push(2, 5, 1, 3, 4);
+      this.diceData.push(2, 2, 2, 2, 2);
       this.$emit("diceToParent", this.diceData);
     },
     rollDice: function rollDice() {
       var arr = _toConsumableArray(this.diceData);
 
       this.diceData = [];
-      this.rollnr++; //   if (this.rollnr == 3) {
-      //     this.rollButtonIsDisabled = true;
-      //   }
+      this.rollnr++;
 
       for (var index = 0; index < 5; index++) {
         if (this.settedDice.includes(index)) {
@@ -2217,28 +2261,27 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }
 
       this.$emit("diceToParent", this.diceData);
-      this.$refs.button.blur();
     },
     playAgain: function playAgain() {
       this.diceData = [];
-      this.rollnr = 0; //   this.rollButtonIsDisabled = false;
-
+      this.rollnr = 0;
       this.$emit("diceToParent", this.diceData);
+      this.$emit("unsetValue");
     }
   },
   computed: {
     buttonStyling: function buttonStyling() {
       return {
         fontSize: this.buttonStyles.fontSize,
-        cursor: this.rollnr === 3 ? "default" : "pointer",
+        cursor: this.rollnr === 3 || this.settedValue === 1 ? "default" : "pointer",
         border: this.rollnr === 3 ? "5px dotted black" : this.buttonStyles.border
       };
     },
     buttonStyling2: function buttonStyling2() {
       return {
         border: this.buttonStyles.border,
-        fontSize: this.buttonStyles.fontSize // cursor: this.rollnr === 3 ? "default" : "pointer"
-
+        fontSize: this.buttonStyles.fontSize,
+        cursor: this.playAgainButtonIsDisabled ? "default" : "pointer"
       };
     },
     playAgainButtonTextStyle: function playAgainButtonTextStyle() {
@@ -2252,6 +2295,15 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         color: this.rollnr === 3 ? "black" : "white",
         fontweight: 600
       };
+    }
+  },
+  watch: {
+    settedValue: function settedValue(newValue) {
+      if (newValue === 1) {
+        this.playAgainButtonIsDisabled = false;
+      } else {
+        this.playAgainButtonIsDisabled = true;
+      }
     }
   }
 });
@@ -2335,7 +2387,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   watch: {
-    dice: function dice(old) {
+    dice: function dice(newValue) {
       if (!this.dice.length) {
         this.diceOnHold = [];
       }
@@ -6888,7 +6940,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.hoverme[data-v-3e511163]:hover {\n  border: 2px solid black;\n}\n.content[data-v-3e511163] {\n  background: green;\n  opacity: 0.9;\n}\n.brdr[data-v-3e511163] {\n  border-right: 3px solid black;\n}\n.brdl[data-v-3e511163] {\n  border-left: 3px solid black;\n}\n.row[data-v-3e511163] {\n  height: 2rem;\n}\n.bgrz[data-v-3e511163] {\n  background: #ffcccb;\n}\n.hr[data-v-3e511163] {\n  background: black;\n  height: 3px;\n}\n.hr2[data-v-3e511163] {\n  background: black;\n  height: 1px;\n}\n.hr3[data-v-3e511163] {\n  background: black;\n  height: 2px;\n}\nh4[data-v-3e511163] {\n  color: red;\n}\nh5[data-v-3e511163] {\n  border-right: 2px solid black;\n  border-left: 2px solid black;\n}\n", ""]);
+exports.push([module.i, "\n.hoverme[data-v-3e511163]:hover {\n  border: 2px solid black;\n  cursor: pointer;\n}\n.content[data-v-3e511163] {\n  background: green;\n  opacity: 0.9;\n}\n.brdr[data-v-3e511163] {\n  border-right: 3px solid black;\n}\n.brdl[data-v-3e511163] {\n  border-left: 3px solid black;\n}\n.row[data-v-3e511163] {\n  height: 2rem;\n}\n.bgrz[data-v-3e511163] {\n  background: #ffcccb;\n}\n.hr[data-v-3e511163] {\n  background: black;\n  height: 3px;\n}\n.hr2[data-v-3e511163] {\n  background: black;\n  height: 1px;\n}\n.hr3[data-v-3e511163] {\n  background: black;\n  height: 2px;\n}\nh4[data-v-3e511163] {\n  color: red;\n}\nh5[data-v-3e511163] {\n  border-right: 2px solid black;\n  border-left: 2px solid black;\n}\n", ""]);
 
 // exports
 
@@ -38483,7 +38535,10 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("results-table", { attrs: { dice: _vm.diceData } }),
+      _c("results-table", {
+        attrs: { dice: _vm.diceData },
+        on: { valueSetted: _vm.onSetValue }
+      }),
       _vm._v(" "),
       _c("show-dices", {
         attrs: { dice: _vm.diceData },
@@ -38491,8 +38546,8 @@ var render = function() {
       }),
       _vm._v(" "),
       _c("roll-button", {
-        attrs: { settedDice: _vm.settedDice },
-        on: { diceToParent: _vm.onRollDice }
+        attrs: { settedDice: _vm.settedDice, settedValue: _vm.settedValue },
+        on: { diceToParent: _vm.onRollDice, unsetValue: _vm.onUnsetValue }
       })
     ],
     1
@@ -38637,9 +38692,42 @@ var render = function() {
       _vm._m(12),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s(_vm.yahtzee))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold",
+            class: { hoverme: !_vm.yahtzeeObject["Yahtzee"] },
+            style: _vm.setColor("Yahtzee"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Yahtzee"] ? null : _vm.setVal("Yahtzee")
+              },
+              mouseover: function($event) {
+                _vm.yahtzeeObject["Yahtzee"]
+                  ? null
+                  : _vm.yahtzee
+                  ? _vm.yahtzee
+                  : (_vm.hoverYaht = "0")
+              },
+              mouseleave: function($event) {
+                _vm.hoverYaht = ""
+              }
+            }
+          },
+          [
+            _vm._v(
+              _vm._s(
+                _vm.hoverYaht
+                  ? _vm.hoverYaht
+                  : _vm.yahtzeeObject["Yahtzee"]
+                  ? _vm.yahtzeeObject["Yahtzee"]
+                  : _vm.yahtzee
+                  ? _vm.yahtzee
+                  : "."
+              )
+            )
+          ]
+        )
       ])
     ]),
     _vm._v(" "),
@@ -38660,11 +38748,24 @@ var render = function() {
         _c(
           "p",
           {
-            staticClass: "mb-0 text-center font-weight-bold hoverme",
-            style: _vm.setcolor,
-            on: { click: _vm.setChance }
+            staticClass: "mb-0 text-center font-weight-bold",
+            class: { hoverme: !_vm.yahtzeeObject["Chance"] },
+            style: _vm.setColor("Chance"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Chance"] ? null : _vm.setVal("Chance")
+              }
+            }
           },
-          [_vm._v(_vm._s(_vm.chance ? _vm.chance : ""))]
+          [
+            _vm._v(
+              _vm._s(
+                _vm.yahtzeeObject["Chance"]
+                  ? _vm.yahtzeeObject["Chance"]
+                  : _vm.chance
+              )
+            )
+          ]
         )
       ])
     ]),
@@ -38678,18 +38779,16 @@ var render = function() {
         staticStyle: { "border-bottom": "3px solid black" }
       },
       [
-        _c("div", { staticClass: "col-3" }),
-        _vm._v(" "),
         _vm._m(15),
         _vm._v(" "),
-        _c("div", { staticClass: "col-3" }, [
+        _c("div", { staticClass: "col-6" }, [
           _c(
             "h4",
             {
               staticClass: "mb-0 text-center",
-              staticStyle: { "border-left": "3px solid red" }
+              staticStyle: { color: "white", "border-left": "3px solid red" }
             },
-            [_vm._v(_vm._s(_vm.yahtzee))]
+            [_vm._v(_vm._s(_vm.totalSettedValue ? _vm.totalSettedValue : "."))]
           )
         ])
       ]
@@ -38859,7 +38958,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-3" }, [
+    return _c("div", { staticClass: "col-6" }, [
       _c(
         "h4",
         {
@@ -38898,9 +38997,9 @@ var render = function() {
       {
         ref: "button",
         staticClass: "btn btn-primary w-25",
-        class: { disabledButton: _vm.rollButtonIsDisabled },
+        class: { disabledButton: _vm.rollnr === 3 },
         style: _vm.buttonStyling,
-        attrs: { disabled: _vm.rollButtonIsDisabled },
+        attrs: { disabled: _vm.rollnr === 3 || _vm.settedValue === 1 },
         on: { click: _vm.rollDice }
       },
       [
@@ -38931,8 +39030,8 @@ var render = function() {
           {
             name: "show",
             rawName: "v-show",
-            value: _vm.rollnr == 3,
-            expression: "rollnr == 3"
+            value: _vm.rollnr === 3 || _vm.settedValue === 1,
+            expression: "rollnr === 3 || settedValue === 1"
           }
         ],
         staticClass: "btn btn-danger w-25 mt-3",
@@ -38944,7 +39043,11 @@ var render = function() {
         _c(
           "pre",
           { staticClass: "mb-0", style: _vm.playAgainButtonTextStyle },
-          [_vm._v(_vm._s(_vm.againBtnTxt))]
+          [
+            _vm._v(
+              _vm._s(_vm.settedValue === 1 ? _vm.againBtnTxt : _vm.placeBtnTxt)
+            )
+          ]
         )
       ]
     )

@@ -95,7 +95,14 @@
         <p class="mb-0 text-center font-weight-bold brdl">Yahtzee</p>
       </div>
       <div class="col-3">
-        <p class="mb-0 text-center font-weight-bold">{{ yahtzee }}</p>
+        <p
+          class="mb-0 text-center font-weight-bold"
+          :class="{ hoverme: !yahtzeeObject['Yahtzee'] }"
+          :style="setColor('Yahtzee')"
+          @click="yahtzeeObject['Yahtzee'] ? null : setVal('Yahtzee')"
+          @mouseover="yahtzeeObject['Yahtzee'] ? null : yahtzee ? yahtzee : hoverYaht='0'"
+          @mouseleave="hoverYaht=''"
+        >{{ hoverYaht ? hoverYaht : yahtzeeObject['Yahtzee'] ? yahtzeeObject['Yahtzee'] : yahtzee ? yahtzee : "." }}</p>
       </div>
     </div>
     <hr class="hr3 my-0" />
@@ -111,20 +118,23 @@
       </div>
       <div class="col-3">
         <p
-          class="mb-0 text-center font-weight-bold hoverme"
-          :style="setcolor"
-          @click="setChance"
-        >{{ chance ? chance : "" }}</p>
+          class="mb-0 text-center font-weight-bold"
+          :class="{ hoverme: !yahtzeeObject['Chance'] }"
+          :style="setColor('Chance')"
+          @click="yahtzeeObject['Chance'] ? null : setVal('Chance')"
+        >{{ yahtzeeObject['Chance'] ? yahtzeeObject['Chance'] : chance }}</p>
       </div>
     </div>
     <hr class="hr3 my-0" />
     <div class="row align-items-center" style="border-bottom: 3px solid black;">
-      <div class="col-3"></div>
-      <div class="col-3">
+      <div class="col-6">
         <h4 class="mb-0 text-center" style="border-right: 3px solid red;">Total</h4>
       </div>
-      <div class="col-3">
-        <h4 class="mb-0 text-center" style="border-left: 3px solid red;">{{ yahtzee }}</h4>
+      <div class="col-6">
+        <h4
+          class="mb-0 text-center"
+          style="color: white; border-left: 3px solid red;"
+        >{{ totalSettedValue ? totalSettedValue : "." }}</h4>
       </div>
     </div>
   </div>
@@ -140,6 +150,7 @@ export default {
   },
   data() {
     return {
+      hoverYaht: "",
       yahtzeeArray: [
         "Ones",
         "Twos",
@@ -157,13 +168,23 @@ export default {
         "Section Bonus (+35%)"
       ],
       yahtzeeObject: {},
-      settedColorChance: "red"
+      settedColor: "black",
+      defaultColor: "red"
     };
   },
   computed: {
+    totalSettedValue() {
+      let total = 0;
+      Object.keys(this.yahtzeeObject).forEach(key => {
+        if (this.yahtzeeObject[key] != "0") {
+          total += this.yahtzeeObject[key];
+        }
+      });
+      return total;
+    },
     createY() {
       return this.yahtzeeArray.reduce((acc, elem) => {
-        acc[elem] = "";
+        acc[elem] = null;
         return acc;
       }, {});
     },
@@ -180,7 +201,7 @@ export default {
           return this.chance;
         }
       }
-      return "";
+      return null;
     },
     fourOfAKind() {
       for (let key in this.counter) {
@@ -188,7 +209,15 @@ export default {
           return this.chance;
         }
       }
-      return "";
+      return null;
+    },
+    yahtzee() {
+      for (let key in this.counter) {
+        if (this.counter[key] === 5) {
+          return true;
+        }
+      }
+      return null;
     },
     fullHouse() {
       for (let key in this.counter) {
@@ -200,6 +229,7 @@ export default {
           }
         }
       }
+      return null;
     },
     street() {
       let maxS = 0;
@@ -214,30 +244,30 @@ export default {
       }
       return maxS;
     },
-    yahtzee() {
-      for (let key in this.counter) {
-        if (this.counter[key] === 5) {
-          return 50;
-        }
-      }
-    },
     chance() {
       if (this.dice.length) {
         return this.dice.reduce((acc, die) => acc + die);
       } else {
-        return false;
+        return null;
       }
-    },
-    setcolor() {
-      return {
-        color: this.settedColorChance
-      };
     }
   },
   methods: {
-    setChance() {
-      this.settedColorChance = "Black";
-      this.yahtzeeObject["Chance"] = this.chance;
+    setColor(para) {
+      return {
+        color: this.yahtzeeObject[para] ? this.settedColor : this.defaultColor
+      };
+    },
+    setVal(para) {
+      if (para == "Chance") {
+        this.yahtzeeObject[para] = this.chance;
+      } else if (para == "Yahtzee") {
+        this.yahtzee
+          ? (this.yahtzeeObject[para] = 50)
+          : (this.yahtzeeObject[para] = "0");
+      }
+      this.$emit("valueSetted");
+      this.hoverYaht = "";
     }
   },
   mounted() {
@@ -249,6 +279,7 @@ export default {
 <style scoped>
 .hoverme:hover {
   border: 2px solid black;
+  cursor: pointer;
 }
 .content {
   background: green;
