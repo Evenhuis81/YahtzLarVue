@@ -1849,12 +1849,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      settedDice: [],
       diceData: []
     };
   },
   methods: {
     onRollDice: function onRollDice(value) {
+      if (!value.length) {
+        this.settedDice = [];
+      }
+
       this.diceData = value;
+    },
+    onSetDice: function onSetDice(value) {
+      this.settedDice = value;
     }
   }
 });
@@ -1870,6 +1878,18 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+//
+//
+//
+//
 //
 //
 //
@@ -2006,9 +2026,19 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   data: function data() {
-    return {};
+    return {
+      yahtzeeArray: ["Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", "Three of a Kind", "Four of a Kind", "Full House", "Small Street", "Large Street", "Yahtzee", "Chance", "Section Bonus (+35%)"],
+      yahtzeeObject: {},
+      settedColorChance: "red"
+    };
   },
   computed: {
+    createY: function createY() {
+      return this.yahtzeeArray.reduce(function (acc, elem) {
+        acc[elem] = "";
+        return acc;
+      }, {});
+    },
     counter: function counter() {
       return this.dice.reduce(function (acc, die) {
         if (!acc[die]) acc[die] = 0;
@@ -2017,38 +2047,82 @@ __webpack_require__.r(__webpack_exports__);
       }, {});
     },
     threeOfAKind: function threeOfAKind() {
-      // var counts = Array(6).fill(0);
-      // this.dice.forEach(dice => {
-      //   counts[dice - 1]++;
-      // });
-      var z = "";
-
       for (var key in this.counter) {
         if (this.counter[key] >= 3) {
-          z = key * this.counter[key];
+          return this.chance;
         }
-      } // couts.forEach((count, index) => {
-      // for (let index = 0; index < diceLength; index++) {
-      //   if (this.counter[index] >= 3) {
-      //     alert(counter[index]);
-      // z = [index + 1] * this.counter[index];
-      // }
-      // }
+      }
 
-
-      return z;
+      return "";
     },
-    fourOfAKind: function fourOfAKind() {},
-    fullHouse: function fullHouse() {},
-    smallStreet: function smallStreet() {},
-    largeStreet: function largeStreet() {},
-    yahtzee: function yahtzee() {},
+    fourOfAKind: function fourOfAKind() {
+      for (var key in this.counter) {
+        if (this.counter[key] >= 4) {
+          return this.chance;
+        }
+      }
+
+      return "";
+    },
+    fullHouse: function fullHouse() {
+      for (var key in this.counter) {
+        if (this.counter[key] === 3) {
+          for (var _key in this.counter) {
+            if (this.counter[_key] === 2) {
+              return 25;
+            }
+          }
+        }
+      }
+    },
+    street: function street() {
+      var maxS = 0;
+
+      var arr = _toConsumableArray(this.dice).sort();
+
+      var sorted = _toConsumableArray(new Set(arr));
+
+      for (var i = 0; i < sorted.length - 1; i++) {
+        var firstDie = sorted[i];
+        var secondDie = sorted[i + 1];
+
+        if (firstDie === secondDie - 1) {
+          maxS++;
+        }
+      }
+
+      return maxS;
+    },
+    yahtzee: function yahtzee() {
+      for (var key in this.counter) {
+        if (this.counter[key] === 5) {
+          return 50;
+        }
+      }
+    },
     chance: function chance() {
-      return this.dice.reduce(function (acc, die) {
-        acc += die;
-        return acc;
-      });
+      if (this.dice.length) {
+        return this.dice.reduce(function (acc, die) {
+          return acc + die;
+        });
+      } else {
+        return false;
+      }
+    },
+    setcolor: function setcolor() {
+      return {
+        color: this.settedColorChance
+      };
     }
+  },
+  methods: {
+    setChance: function setChance() {
+      this.settedColorChance = "Black";
+      this.yahtzeeObject["Chance"] = this.chance;
+    }
+  },
+  mounted: function mounted() {
+    this.yahtzeeObject = this.createY;
   }
 });
 
@@ -2063,6 +2137,21 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2082,25 +2171,49 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    placingValue: Number,
+    settedDice: {
+      type: Array,
+      required: true
+    }
+  },
   data: function data() {
     return {
+      againBtnTxt: "Place Value",
+      buttonStyles: {
+        border: "5px solid black",
+        fontSize: "2rem",
+        color: "white",
+        fontWeight: 600
+      },
       diceData: [],
-      rollButtonIsDisabled: false,
+      rollButtonIsDisabled: this.rollnr === 3,
+      playAgainButtonIsDisabled: this.placingValue,
       rollnr: 0
     };
   },
   methods: {
-    rollDice: function rollDice() {
+    rollDice2: function rollDice2() {
       this.diceData = [];
-      this.rollnr++;
+      this.diceData.push(2, 5, 1, 3, 4);
+      this.$emit("diceToParent", this.diceData);
+    },
+    rollDice: function rollDice() {
+      var arr = _toConsumableArray(this.diceData);
 
-      if (this.rollnr == 3) {
-        this.rollButtonIsDisabled = true;
-      }
+      this.diceData = [];
+      this.rollnr++; //   if (this.rollnr == 3) {
+      //     this.rollButtonIsDisabled = true;
+      //   }
 
       for (var index = 0; index < 5; index++) {
-        var facevalue = Math.ceil(Math.random() * 6);
-        this.diceData.push(facevalue);
+        if (this.settedDice.includes(index)) {
+          this.diceData.push(arr[index]);
+        } else {
+          var facevalue = Math.ceil(Math.random() * 6);
+          this.diceData.push(facevalue);
+        }
       }
 
       this.$emit("diceToParent", this.diceData);
@@ -2108,9 +2221,37 @@ __webpack_require__.r(__webpack_exports__);
     },
     playAgain: function playAgain() {
       this.diceData = [];
-      this.rollnr = 0;
-      this.rollButtonIsDisabled = false;
+      this.rollnr = 0; //   this.rollButtonIsDisabled = false;
+
       this.$emit("diceToParent", this.diceData);
+    }
+  },
+  computed: {
+    buttonStyling: function buttonStyling() {
+      return {
+        fontSize: this.buttonStyles.fontSize,
+        cursor: this.rollnr === 3 ? "default" : "pointer",
+        border: this.rollnr === 3 ? "5px dotted black" : this.buttonStyles.border
+      };
+    },
+    buttonStyling2: function buttonStyling2() {
+      return {
+        border: this.buttonStyles.border,
+        fontSize: this.buttonStyles.fontSize // cursor: this.rollnr === 3 ? "default" : "pointer"
+
+      };
+    },
+    playAgainButtonTextStyle: function playAgainButtonTextStyle() {
+      return {
+        color: "white",
+        fontweight: 600
+      };
+    },
+    rollButtonTextStyle: function rollButtonTextStyle() {
+      return {
+        color: this.rollnr === 3 ? "black" : "white",
+        fontweight: 600
+      };
     }
   }
 });
@@ -2133,6 +2274,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     dice: {
@@ -2141,7 +2290,9 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   data: function data() {
-    return {};
+    return {
+      diceOnHold: []
+    };
   },
   computed: {
     diceShow: function diceShow() {
@@ -2155,6 +2306,39 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     getHexCodeDice: function getHexCodeDice(die) {
       return "&#x268".concat(die - 1, ";");
+    },
+    settedDice: function settedDice(index) {
+      if (this.diceOnHold.includes(index)) {
+        return {
+          color: "green"
+        };
+      } else {
+        return {
+          color: "black"
+        };
+      }
+    },
+    setDice: function setDice(index) {
+      if (this.diceOnHold.includes(index)) {
+        for (var i = 0; i < this.diceOnHold.length; i++) {
+          if (this.diceOnHold[i] === index) {
+            this.diceOnHold.splice(i, 1);
+          }
+        }
+      } else {
+        this.diceOnHold.push(index);
+      }
+
+      if (this.diceOnHold.length) {
+        this.$emit("settedDiceToParent", this.diceOnHold);
+      }
+    }
+  },
+  watch: {
+    dice: function dice(old) {
+      if (!this.dice.length) {
+        this.diceOnHold = [];
+      }
     }
   }
 });
@@ -6704,7 +6888,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.content[data-v-3e511163] {\n  background: green;\n  opacity: 0.9;\n}\n.brdr[data-v-3e511163] {\n  border-right: 3px solid black;\n}\n.brdl[data-v-3e511163] {\n  border-left: 3px solid black;\n}\n.row[data-v-3e511163] {\n  height: 2rem;\n}\n.bgrz[data-v-3e511163] {\n  background: #ffcccb;\n}\n.hr[data-v-3e511163] {\n  background: black;\n  height: 3px;\n}\n.hr2[data-v-3e511163] {\n  background: black;\n  height: 1px;\n}\n.hr3[data-v-3e511163] {\n  background: black;\n  height: 2px;\n}\nh4[data-v-3e511163] {\n  color: red;\n}\nh5[data-v-3e511163] {\n  border-right: 2px solid black;\n  border-left: 2px solid black;\n}\n", ""]);
+exports.push([module.i, "\n.hoverme[data-v-3e511163]:hover {\n  border: 2px solid black;\n}\n.content[data-v-3e511163] {\n  background: green;\n  opacity: 0.9;\n}\n.brdr[data-v-3e511163] {\n  border-right: 3px solid black;\n}\n.brdl[data-v-3e511163] {\n  border-left: 3px solid black;\n}\n.row[data-v-3e511163] {\n  height: 2rem;\n}\n.bgrz[data-v-3e511163] {\n  background: #ffcccb;\n}\n.hr[data-v-3e511163] {\n  background: black;\n  height: 3px;\n}\n.hr2[data-v-3e511163] {\n  background: black;\n  height: 1px;\n}\n.hr3[data-v-3e511163] {\n  background: black;\n  height: 2px;\n}\nh4[data-v-3e511163] {\n  color: red;\n}\nh5[data-v-3e511163] {\n  border-right: 2px solid black;\n  border-left: 2px solid black;\n}\n", ""]);
 
 // exports
 
@@ -6723,7 +6907,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.disabledButton[data-v-26d38f3a] {\r\n  opacity: 0.9;\n}\nbutton[data-v-26d38f3a] {\r\n  border: 5px solid black;\r\n  font-size: 2rem;\n}\r\n", ""]);
+exports.push([module.i, "\n.disabledButton[data-v-26d38f3a] {\n  opacity: 0.9;\n}\n", ""]);
 
 // exports
 
@@ -6742,7 +6926,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.diceshow {\r\n  opacity: 0.9;\n}\n.visibleDice {\r\n  opacity: 0.9;\n}\n.invisibleDice {\r\n  opacity: 0;\n}\n#dice {\r\n  font-size: 6rem;\n}\r\n", ""]);
+exports.push([module.i, "\n.rolledDice:hover {\n  border: 2px solid red;\n}\n.diceshow {\n  opacity: 0.9;\n}\n.visibleDice {\n  opacity: 0.9;\n}\n.invisibleDice {\n  opacity: 0;\n}\n#dice {\n  font-size: 6rem;\n}\n", ""]);
 
 // exports
 
@@ -38301,9 +38485,15 @@ var render = function() {
     [
       _c("results-table", { attrs: { dice: _vm.diceData } }),
       _vm._v(" "),
-      _c("show-dices", { attrs: { dice: _vm.diceData } }),
+      _c("show-dices", {
+        attrs: { dice: _vm.diceData },
+        on: { settedDiceToParent: _vm.onSetDice }
+      }),
       _vm._v(" "),
-      _c("roll-button", { on: { diceToParent: _vm.onRollDice } })
+      _c("roll-button", {
+        attrs: { settedDice: _vm.settedDice },
+        on: { diceToParent: _vm.onRollDice }
+      })
     ],
     1
   )
@@ -38368,7 +38558,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s())
+          _vm._v(_vm._s(_vm.dice.length ? _vm.fourOfAKind : ""))
         ])
       ])
     ]),
@@ -38388,7 +38578,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s())
+          _vm._v(_vm._s(_vm.fullHouse))
         ])
       ])
     ]),
@@ -38408,7 +38598,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s())
+          _vm._v(_vm._s(_vm.dice.length ? (_vm.street >= 3 ? "25" : "") : ""))
         ])
       ])
     ]),
@@ -38428,7 +38618,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s())
+          _vm._v(_vm._s(_vm.dice.length ? (_vm.street >= 4 ? "40" : "") : ""))
         ])
       ])
     ]),
@@ -38448,7 +38638,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s(this.counter))
+          _vm._v(_vm._s(_vm.yahtzee))
         ])
       ])
     ]),
@@ -38467,9 +38657,15 @@ var render = function() {
       _vm._m(14),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s(_vm.dice.length ? _vm.chance : ""))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold hoverme",
+            style: _vm.setcolor,
+            on: { click: _vm.setChance }
+          },
+          [_vm._v(_vm._s(_vm.chance ? _vm.chance : ""))]
+        )
       ])
     ]),
     _vm._v(" "),
@@ -38493,7 +38689,7 @@ var render = function() {
               staticClass: "mb-0 text-center",
               staticStyle: { "border-left": "3px solid red" }
             },
-            [_vm._v(_vm._s("."))]
+            [_vm._v(_vm._s(_vm.yahtzee))]
           )
         ])
       ]
@@ -38703,32 +38899,26 @@ var render = function() {
         ref: "button",
         staticClass: "btn btn-primary w-25",
         class: { disabledButton: _vm.rollButtonIsDisabled },
+        style: _vm.buttonStyling,
         attrs: { disabled: _vm.rollButtonIsDisabled },
         on: { click: _vm.rollDice }
       },
       [
-        _c(
-          "pre",
-          {
-            staticClass: "mb-0",
-            staticStyle: { color: "white", "font-weight": "600" }
-          },
-          [
-            _vm._v("ROLL ["),
-            _c("span", { staticStyle: { color: "red" } }, [
-              _vm._v(_vm._s(_vm.rollnr >= 1 ? "X" : " "))
-            ]),
-            _vm._v("] ["),
-            _c("span", { staticStyle: { color: "red" } }, [
-              _vm._v(_vm._s(_vm.rollnr >= 2 ? "X" : " "))
-            ]),
-            _vm._v("] ["),
-            _c("span", { staticStyle: { color: "red" } }, [
-              _vm._v(_vm._s(_vm.rollnr == 3 ? "X" : " "))
-            ]),
-            _vm._v("]")
-          ]
-        )
+        _c("pre", { staticClass: "mb-0", style: _vm.rollButtonTextStyle }, [
+          _vm._v("ROLL ["),
+          _c("span", { staticStyle: { color: "red" } }, [
+            _vm._v(_vm._s(_vm.rollnr >= 1 ? "X" : " "))
+          ]),
+          _vm._v("] ["),
+          _c("span", { staticStyle: { color: "red" } }, [
+            _vm._v(_vm._s(_vm.rollnr >= 2 ? "X" : " "))
+          ]),
+          _vm._v("] ["),
+          _c("span", { staticStyle: { color: "red" } }, [
+            _vm._v(_vm._s(_vm.rollnr == 3 ? "X" : " "))
+          ]),
+          _vm._v("]")
+        ])
       ]
     ),
     _vm._v(" "),
@@ -38746,16 +38936,15 @@ var render = function() {
           }
         ],
         staticClass: "btn btn-danger w-25 mt-3",
+        style: _vm.buttonStyling2,
+        attrs: { disabled: _vm.playAgainButtonIsDisabled },
         on: { click: _vm.playAgain }
       },
       [
         _c(
           "pre",
-          {
-            staticClass: "mb-0",
-            staticStyle: { color: "white", "font-weight": "600" }
-          },
-          [_vm._v("PLAY AGAIN!")]
+          { staticClass: "mb-0", style: _vm.playAgainButtonTextStyle },
+          [_vm._v(_vm._s(_vm.againBtnTxt))]
         )
       ]
     )
@@ -38792,8 +38981,15 @@ var render = function() {
     _vm._l(_vm.dice, function(die, index) {
       return _c("span", {
         key: index,
+        staticClass: "rolledDice",
+        style: _vm.settedDice(index),
         attrs: { id: "dice" },
-        domProps: { innerHTML: _vm._s(_vm.getHexCodeDice(die)) }
+        domProps: { innerHTML: _vm._s(_vm.getHexCodeDice(die)) },
+        on: {
+          click: function($event) {
+            return _vm.setDice(index)
+          }
+        }
       })
     }),
     0
@@ -51406,8 +51602,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Laragon\www\Yahtzee-Vue\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\Laragon\www\Yahtzee-Vue\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Laragon\www\lara-vue-yahtzee\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Laragon\www\lara-vue-yahtzee\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

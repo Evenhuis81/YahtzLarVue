@@ -35,7 +35,7 @@
         <p class="mb-0 text-center font-weight-bold brdl">4-of-a-kind</p>
       </div>
       <div class="col-3">
-        <p class="mb-0 text-center font-weight-bold">{{ }}</p>
+        <p class="mb-0 text-center font-weight-bold">{{ dice.length ? fourOfAKind : '' }}</p>
       </div>
     </div>
     <hr class="hr2 my-0" />
@@ -50,7 +50,7 @@
         <p class="mb-0 text-center font-weight-bold brdl">Full House</p>
       </div>
       <div class="col-3">
-        <p class="mb-0 text-center font-weight-bold">{{ }}</p>
+        <p class="mb-0 text-center font-weight-bold">{{ fullHouse }}</p>
       </div>
     </div>
     <hr class="hr2 my-0" />
@@ -65,7 +65,7 @@
         <p class="mb-0 text-center font-weight-bold brdl">Small Street</p>
       </div>
       <div class="col-3">
-        <p class="mb-0 text-center font-weight-bold">{{ }}</p>
+        <p class="mb-0 text-center font-weight-bold">{{ dice.length ? street >=3 ? "25" : '' : '' }}</p>
       </div>
     </div>
     <hr class="hr2 my-0" />
@@ -80,7 +80,7 @@
         <p class="mb-0 text-center font-weight-bold brdl">Large Street</p>
       </div>
       <div class="col-3">
-        <p class="mb-0 text-center font-weight-bold">{{ }}</p>
+        <p class="mb-0 text-center font-weight-bold">{{ dice.length ? street >=4 ? "40" : '' : '' }}</p>
       </div>
     </div>
     <hr class="hr2 my-0" />
@@ -95,7 +95,7 @@
         <p class="mb-0 text-center font-weight-bold brdl">Yahtzee</p>
       </div>
       <div class="col-3">
-        <p class="mb-0 text-center font-weight-bold">{{ this.counter }}</p>
+        <p class="mb-0 text-center font-weight-bold">{{ yahtzee }}</p>
       </div>
     </div>
     <hr class="hr3 my-0" />
@@ -110,7 +110,11 @@
         <p class="mb-0 text-center font-weight-bold brdl">Chance</p>
       </div>
       <div class="col-3">
-        <p class="mb-0 text-center font-weight-bold">{{ dice.length ? chance : '' }}</p>
+        <p
+          class="mb-0 text-center font-weight-bold hoverme"
+          :style="setcolor"
+          @click="setChance"
+        >{{ chance ? chance : "" }}</p>
       </div>
     </div>
     <hr class="hr3 my-0" />
@@ -120,7 +124,7 @@
         <h4 class="mb-0 text-center" style="border-right: 3px solid red;">Total</h4>
       </div>
       <div class="col-3">
-        <h4 class="mb-0 text-center" style="border-left: 3px solid red;">{{ '.' }}</h4>
+        <h4 class="mb-0 text-center" style="border-left: 3px solid red;">{{ yahtzee }}</h4>
       </div>
     </div>
   </div>
@@ -135,9 +139,34 @@ export default {
     }
   },
   data() {
-    return {};
+    return {
+      yahtzeeArray: [
+        "Ones",
+        "Twos",
+        "Threes",
+        "Fours",
+        "Fives",
+        "Sixes",
+        "Three of a Kind",
+        "Four of a Kind",
+        "Full House",
+        "Small Street",
+        "Large Street",
+        "Yahtzee",
+        "Chance",
+        "Section Bonus (+35%)"
+      ],
+      yahtzeeObject: {},
+      settedColorChance: "red"
+    };
   },
   computed: {
+    createY() {
+      return this.yahtzeeArray.reduce((acc, elem) => {
+        acc[elem] = "";
+        return acc;
+      }, {});
+    },
     counter() {
       return this.dice.reduce((acc, die) => {
         if (!acc[die]) acc[die] = 0;
@@ -146,38 +175,81 @@ export default {
       }, {});
     },
     threeOfAKind() {
-      // var counts = Array(6).fill(0);
-      // this.dice.forEach(dice => {
-      //   counts[dice - 1]++;
-      // });
       for (let key in this.counter) {
         if (this.counter[key] >= 3) {
           return this.chance;
         }
       }
       return "";
-
-      // couts.forEach((count, index) => {
-      // for (let index = 0; index < diceLength; index++) {
-      //   if (this.counter[index] >= 3) {
-      //     alert(counter[index]);
-      // z = [index + 1] * this.counter[index];
-      // }
-      // }
     },
-    fourOfAKind() {},
-    fullHouse() {},
-    smallStreet() {},
-    largeStreet() {},
-    yahtzee() {},
+    fourOfAKind() {
+      for (let key in this.counter) {
+        if (this.counter[key] >= 4) {
+          return this.chance;
+        }
+      }
+      return "";
+    },
+    fullHouse() {
+      for (let key in this.counter) {
+        if (this.counter[key] === 3) {
+          for (let key in this.counter) {
+            if (this.counter[key] === 2) {
+              return 25;
+            }
+          }
+        }
+      }
+    },
+    street() {
+      let maxS = 0;
+      const arr = [...this.dice].sort();
+      let sorted = [...new Set(arr)];
+      for (let i = 0; i < sorted.length - 1; i++) {
+        const firstDie = sorted[i];
+        const secondDie = sorted[i + 1];
+        if (firstDie === secondDie - 1) {
+          maxS++;
+        }
+      }
+      return maxS;
+    },
+    yahtzee() {
+      for (let key in this.counter) {
+        if (this.counter[key] === 5) {
+          return 50;
+        }
+      }
+    },
     chance() {
-      return this.dice.reduce((acc, die) => acc + die);
+      if (this.dice.length) {
+        return this.dice.reduce((acc, die) => acc + die);
+      } else {
+        return false;
+      }
+    },
+    setcolor() {
+      return {
+        color: this.settedColorChance
+      };
     }
+  },
+  methods: {
+    setChance() {
+      this.settedColorChance = "Black";
+      this.yahtzeeObject["Chance"] = this.chance;
+    }
+  },
+  mounted() {
+    this.yahtzeeObject = this.createY;
   }
 };
 </script>
 
 <style scoped>
+.hoverme:hover {
+  border: 2px solid black;
+}
 .content {
   background: green;
   opacity: 0.9;
