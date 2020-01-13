@@ -51,7 +51,7 @@ export default {
     // For testing
     rollDice2() {
       this.diceData = [];
-      this.diceData.push(2, 2, 2, 2, 2);
+      this.diceData.push(4, 3, 2, 2, 1);
       this.$emit("diceToParent", this.diceData);
     },
     rollDice() {

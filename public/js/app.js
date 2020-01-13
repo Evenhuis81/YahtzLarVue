@@ -2040,6 +2040,84 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     dice: {
@@ -2049,7 +2127,19 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   },
   data: function data() {
     return {
-      hoverYaht: "",
+      settedValue: false,
+      hoverYahtzee: "",
+      hoverThreeOfAKind: "",
+      hoverFourOfAKind: "",
+      hoverFullHouse: "",
+      hoverSmallStreet: "",
+      hoverLargeStreet: "",
+      hoverSixes: "",
+      hoverFives: "",
+      hoverFours: "",
+      hoverThrees: "",
+      hoverTwos: "",
+      hoverOnes: "",
       yahtzeeArray: ["Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", "Three of a Kind", "Four of a Kind", "Full House", "Small Street", "Large Street", "Yahtzee", "Chance", "Section Bonus (+35%)"],
       yahtzeeObject: {},
       settedColor: "black",
@@ -2057,6 +2147,18 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     };
   },
   computed: {
+    sectionBonus: function sectionBonus() {
+      var sectionTotal = 0;
+      var sectionKeys = Object.keys(this.yahtzeeObject); // alert(sectionKeys);
+
+      for (var index = 0; index < 6; index++) {
+        if (this.yahtzeeObject[sectionKeys[index]] != "0") {
+          sectionTotal += this.yahtzeeObject[sectionKeys[index]];
+        }
+      }
+
+      return sectionTotal;
+    },
     totalSettedValue: function totalSettedValue() {
       var _this = this;
 
@@ -2157,17 +2259,42 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     },
     setVal: function setVal(para) {
       if (para == "Chance") {
-        this.yahtzeeObject[para] = this.chance;
+        this.chance ? this.yahtzeeObject[para] = this.chance : this.yahtzeeObject[para] = "0";
       } else if (para == "Yahtzee") {
         this.yahtzee ? this.yahtzeeObject[para] = 50 : this.yahtzeeObject[para] = "0";
+      } else if (para == "Sixes") {
+        this.counter[6] ? this.yahtzeeObject[para] = this.counter[6] * 6 : this.yahtzeeObject[para] = "0";
+      } else if (para == "Fives") {
+        this.counter[5] ? this.yahtzeeObject[para] = this.counter[5] * 5 : this.yahtzeeObject[para] = "0";
+      } else if (para == "Fours") {
+        this.counter[4] ? this.yahtzeeObject[para] = this.counter[4] * 4 : this.yahtzeeObject[para] = "0";
+      } else if (para == "Threes") {
+        this.counter[3] ? this.yahtzeeObject[para] = this.counter[3] * 3 : this.yahtzeeObject[para] = "0";
+      } else if (para == "Twos") {
+        this.counter[2] ? this.yahtzeeObject[para] = this.counter[2] * 2 : this.yahtzeeObject[para] = "0";
+      } else if (para == "Ones") {
+        this.counter[1] ? this.yahtzeeObject[para] = this.counter[1] : this.yahtzeeObject[para] = "0";
+      } else if (para == "Three of a Kind") {
+        this.threeOfAKind ? this.yahtzeeObject[para] = this.threeOfAKind : this.yahtzeeObject[para] = "0";
+      } else if (para == "Large Street") {
+        this.street >= 4 ? this.yahtzeeObject[para] = 40 : this.yahtzeeObject[para] = "0";
+      } else if (para == "Small Street") {
+        this.street >= 3 ? this.yahtzeeObject[para] = 30 : this.yahtzeeObject[para] = "0";
+      } else if (para == "Full House") {
+        this.fullHouse ? this.yahtzeeObject[para] = this.fullHouse : this.yahtzeeObject[para] = "0";
       }
 
-      this.$emit("valueSetted");
-      this.hoverYaht = "";
+      this.settedValue = true;
+      this.$emit("valueSetted"); // alert(this.hover + para);
     }
   },
   mounted: function mounted() {
     this.yahtzeeObject = this.createY;
+  },
+  watch: {
+    dice: function dice(newValue) {
+      this.dice.length ? this.settedValue = false : this.settedValue = true;
+    }
   }
 });
 
@@ -2242,7 +2369,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     // For testing
     rollDice2: function rollDice2() {
       this.diceData = [];
-      this.diceData.push(2, 2, 2, 2, 2);
+      this.diceData.push(4, 3, 2, 2, 1);
       this.$emit("diceToParent", this.diceData);
     },
     rollDice: function rollDice() {
@@ -6940,7 +7067,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.hoverme[data-v-3e511163]:hover {\n  border: 2px solid black;\n  cursor: pointer;\n}\n.content[data-v-3e511163] {\n  background: green;\n  opacity: 0.9;\n}\n.brdr[data-v-3e511163] {\n  border-right: 3px solid black;\n}\n.brdl[data-v-3e511163] {\n  border-left: 3px solid black;\n}\n.row[data-v-3e511163] {\n  height: 2rem;\n}\n.bgrz[data-v-3e511163] {\n  background: #ffcccb;\n}\n.hr[data-v-3e511163] {\n  background: black;\n  height: 3px;\n}\n.hr2[data-v-3e511163] {\n  background: black;\n  height: 1px;\n}\n.hr3[data-v-3e511163] {\n  background: black;\n  height: 2px;\n}\nh4[data-v-3e511163] {\n  color: red;\n}\nh5[data-v-3e511163] {\n  border-right: 2px solid black;\n  border-left: 2px solid black;\n}\n", ""]);
+exports.push([module.i, "\n.hoverme[data-v-3e511163]:hover {\r\n  border: 2px solid black;\r\n  cursor: pointer;\n}\n.content[data-v-3e511163] {\r\n  background: green;\r\n  opacity: 0.9;\n}\n.brdr[data-v-3e511163] {\r\n  border-right: 3px solid black;\n}\n.brdl[data-v-3e511163] {\r\n  border-left: 3px solid black;\n}\n.row[data-v-3e511163] {\r\n  height: 2rem;\n}\n.bgrz[data-v-3e511163] {\r\n  background: #ffcccb;\n}\n.hr[data-v-3e511163] {\r\n  background: black;\r\n  height: 3px;\n}\n.hr2[data-v-3e511163] {\r\n  background: black;\r\n  height: 1px;\n}\n.hr3[data-v-3e511163] {\r\n  background: black;\r\n  height: 2px;\n}\nh4[data-v-3e511163] {\r\n  color: red;\n}\nh5[data-v-3e511163] {\r\n  border-right: 2px solid black;\r\n  border-left: 2px solid black;\n}\r\n", ""]);
 
 // exports
 
@@ -6959,7 +7086,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.disabledButton[data-v-26d38f3a] {\n  opacity: 0.9;\n}\n", ""]);
+exports.push([module.i, "\n.disabledButton[data-v-26d38f3a] {\r\n  opacity: 0.9;\n}\r\n", ""]);
 
 // exports
 
@@ -6978,7 +7105,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.rolledDice:hover {\n  border: 2px solid red;\n}\n.diceshow {\n  opacity: 0.9;\n}\n.visibleDice {\n  opacity: 0.9;\n}\n.invisibleDice {\n  opacity: 0;\n}\n#dice {\n  font-size: 6rem;\n}\n", ""]);
+exports.push([module.i, "\n.rolledDice:hover {\r\n  border: 2px solid red;\n}\n.diceshow {\r\n  opacity: 0.9;\n}\n.visibleDice {\r\n  opacity: 0.9;\n}\n.invisibleDice {\r\n  opacity: 0;\n}\n#dice {\r\n  font-size: 6rem;\n}\r\n", ""]);
 
 // exports
 
@@ -38584,17 +38711,89 @@ var render = function() {
       _vm._m(1),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s(_vm.counter[1] || "."))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold brdr",
+            class: { hoverme: !_vm.yahtzeeObject["Ones"] && !_vm.settedValue },
+            style: _vm.setColor("Ones"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Ones"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Ones")
+              },
+              mouseover: function($event) {
+                _vm.yahtzeeObject["Ones"]
+                  ? null
+                  : _vm.counter[1]
+                  ? _vm.counter[1]
+                  : (_vm.hoverOnes = "0")
+              },
+              mouseleave: function($event) {
+                _vm.hoverOnes = ""
+              }
+            }
+          },
+          [
+            _vm._v(
+              _vm._s(
+                _vm.hoverOnes
+                  ? _vm.hoverOnes
+                  : _vm.yahtzeeObject["Ones"]
+                  ? _vm.yahtzeeObject["Ones"]
+                  : _vm.counter[1]
+                  ? _vm.counter[1]
+                  : "."
+              )
+            )
+          ]
+        )
       ]),
       _vm._v(" "),
       _vm._m(2),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s(_vm.dice.length ? _vm.threeOfAKind : ""))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold",
+            class: {
+              hoverme: !_vm.yahtzeeObject["Three of a Kind"] && !_vm.settedValue
+            },
+            style: _vm.setColor("Three of a Kind"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Three of a Kind"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Three of a Kind")
+              },
+              mouseover: function($event) {
+                _vm.yahtzeeObject["Three of a Kind"]
+                  ? null
+                  : _vm.threeOfAKind
+                  ? _vm.threeOfAKind
+                  : (_vm.hoverThreeOfAKind = "0")
+              },
+              mouseleave: function($event) {
+                _vm.hoverThreeOfAKind = ""
+              }
+            }
+          },
+          [
+            _vm._v(
+              _vm._s(
+                _vm.hoverThreeOfAKind
+                  ? _vm.hoverThreeOfAKind
+                  : _vm.yahtzeeObject["Three of a Kind"]
+                  ? _vm.yahtzeeObject["Three of a Kind"]
+                  : _vm.threeOfAKind
+                  ? _vm.threeOfAKind
+                  : "."
+              )
+            )
+          ]
+        )
       ])
     ]),
     _vm._v(" "),
@@ -38604,17 +38803,89 @@ var render = function() {
       _vm._m(3),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s(_vm.counter[2] * 2 || "."))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold brdr",
+            class: { hoverme: !_vm.yahtzeeObject["Twos"] && !_vm.settedValue },
+            style: _vm.setColor("Twos"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Twos"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Twos")
+              },
+              mouseover: function($event) {
+                _vm.yahtzeeObject["Twos"]
+                  ? null
+                  : _vm.counter[2]
+                  ? _vm.counter[2] * 2
+                  : (_vm.hoverTwos = "0")
+              },
+              mouseleave: function($event) {
+                _vm.hoverTwos = ""
+              }
+            }
+          },
+          [
+            _vm._v(
+              _vm._s(
+                _vm.hoverTwos
+                  ? _vm.hoverTwos
+                  : _vm.yahtzeeObject["Twos"]
+                  ? _vm.yahtzeeObject["Twos"]
+                  : _vm.counter[2]
+                  ? _vm.counter[2] * 2
+                  : "."
+              )
+            )
+          ]
+        )
       ]),
       _vm._v(" "),
       _vm._m(4),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s(_vm.dice.length ? _vm.fourOfAKind : ""))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold",
+            class: {
+              hoverme: !_vm.yahtzeeObject["Four of a Kind"] && !_vm.settedValue
+            },
+            style: _vm.setColor("Four of a Kind"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Four of a Kind"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Four of a Kind")
+              },
+              mouseover: function($event) {
+                _vm.yahtzeeObject["Four of a Kind"]
+                  ? null
+                  : _vm.fourOfAKind
+                  ? _vm.fourOfAKind
+                  : (_vm.hoverFourOfAKind = "0")
+              },
+              mouseleave: function($event) {
+                _vm.hoverFourOfAKind = ""
+              }
+            }
+          },
+          [
+            _vm._v(
+              _vm._s(
+                _vm.hoverFourOfAKind
+                  ? _vm.hoverFourOfAKind
+                  : _vm.yahtzeeObject["Four of a Kind"]
+                  ? _vm.yahtzeeObject["Four of a Kind"]
+                  : _vm.fourOfAKind
+                  ? _vm.fourOfAKind
+                  : "."
+              )
+            )
+          ]
+        )
       ])
     ]),
     _vm._v(" "),
@@ -38624,17 +38895,91 @@ var render = function() {
       _vm._m(5),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s(_vm.counter[3] * 3 || "."))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold brdr",
+            class: {
+              hoverme: !_vm.yahtzeeObject["Threes"] && !_vm.settedValue
+            },
+            style: _vm.setColor("Threes"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Threes"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Threes")
+              },
+              mouseover: function($event) {
+                _vm.yahtzeeObject["Threes"]
+                  ? null
+                  : _vm.counter[3]
+                  ? _vm.counter[3] * 3
+                  : (_vm.hoverThrees = "0")
+              },
+              mouseleave: function($event) {
+                _vm.hoverThrees = ""
+              }
+            }
+          },
+          [
+            _vm._v(
+              _vm._s(
+                _vm.hoverThrees
+                  ? _vm.hoverThrees
+                  : _vm.yahtzeeObject["Threes"]
+                  ? _vm.yahtzeeObject["Threes"]
+                  : _vm.counter[3]
+                  ? _vm.counter[3] * 3
+                  : "."
+              )
+            )
+          ]
+        )
       ]),
       _vm._v(" "),
       _vm._m(6),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s(_vm.fullHouse))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold",
+            class: {
+              hoverme: !_vm.yahtzeeObject["Full House"] && !_vm.settedValue
+            },
+            style: _vm.setColor("Full House"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Full House"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Full House")
+              },
+              mouseover: function($event) {
+                _vm.yahtzeeObject["Full House"]
+                  ? null
+                  : _vm.fullHouse
+                  ? _vm.fullHouse
+                  : (_vm.hoverFullHouse = "0")
+              },
+              mouseleave: function($event) {
+                _vm.hoverFullHouse = ""
+              }
+            }
+          },
+          [
+            _vm._v(
+              _vm._s(
+                _vm.hoverFullHouse
+                  ? _vm.hoverFullHouse
+                  : _vm.yahtzeeObject["Full House"]
+                  ? _vm.yahtzeeObject["Full House"]
+                  : _vm.fullHouse
+                  ? _vm.fullHouse
+                  : "."
+              )
+            )
+          ]
+        )
       ])
     ]),
     _vm._v(" "),
@@ -38644,17 +38989,89 @@ var render = function() {
       _vm._m(7),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s(_vm.counter[4] * 4 || "."))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold brdr",
+            class: { hoverme: !_vm.yahtzeeObject["Fours"] && !_vm.settedValue },
+            style: _vm.setColor("Fours"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Fours"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Fours")
+              },
+              mouseover: function($event) {
+                _vm.yahtzeeObject["Fours"]
+                  ? null
+                  : _vm.counter[4]
+                  ? _vm.counter[4] * 4
+                  : (_vm.hoverFours = "0")
+              },
+              mouseleave: function($event) {
+                _vm.hoverFours = ""
+              }
+            }
+          },
+          [
+            _vm._v(
+              _vm._s(
+                _vm.hoverFours
+                  ? _vm.hoverFours
+                  : _vm.yahtzeeObject["Fours"]
+                  ? _vm.yahtzeeObject["Fours"]
+                  : _vm.counter[4]
+                  ? _vm.counter[4] * 4
+                  : "."
+              )
+            )
+          ]
+        )
       ]),
       _vm._v(" "),
       _vm._m(8),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s(_vm.dice.length ? (_vm.street >= 3 ? "25" : "") : ""))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold",
+            class: {
+              hoverme: !_vm.yahtzeeObject["Small Street"] && !_vm.settedValue
+            },
+            style: _vm.setColor("Small Street"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Small Street"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Small Street")
+              },
+              mouseover: function($event) {
+                _vm.yahtzeeObject["Small Street"]
+                  ? null
+                  : _vm.street >= 3
+                  ? 30
+                  : (_vm.hoverSmallStreet = "0")
+              },
+              mouseleave: function($event) {
+                _vm.hoverSmallStreet = ""
+              }
+            }
+          },
+          [
+            _vm._v(
+              _vm._s(
+                _vm.hoverSmallStreet
+                  ? _vm.hoverSmallStreet
+                  : _vm.yahtzeeObject["Small Street"]
+                  ? _vm.yahtzeeObject["Small Street"]
+                  : _vm.street >= 3
+                  ? 30
+                  : "."
+              )
+            )
+          ]
+        )
       ])
     ]),
     _vm._v(" "),
@@ -38664,17 +39081,89 @@ var render = function() {
       _vm._m(9),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s(_vm.counter[5] * 5 || "."))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold brdr",
+            class: { hoverme: !_vm.yahtzeeObject["Fives"] && !_vm.settedValue },
+            style: _vm.setColor("Fives"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Fives"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Fives")
+              },
+              mouseover: function($event) {
+                _vm.yahtzeeObject["Fives"]
+                  ? null
+                  : _vm.counter[5]
+                  ? _vm.counter[5] * 5
+                  : (_vm.hoverFives = "0")
+              },
+              mouseleave: function($event) {
+                _vm.hoverFives = ""
+              }
+            }
+          },
+          [
+            _vm._v(
+              _vm._s(
+                _vm.hoverFives
+                  ? _vm.hoverFives
+                  : _vm.yahtzeeObject["Fives"]
+                  ? _vm.yahtzeeObject["Fives"]
+                  : _vm.counter[5]
+                  ? _vm.counter[5] * 5
+                  : "."
+              )
+            )
+          ]
+        )
       ]),
       _vm._v(" "),
       _vm._m(10),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold" }, [
-          _vm._v(_vm._s(_vm.dice.length ? (_vm.street >= 4 ? "40" : "") : ""))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold",
+            class: {
+              hoverme: !_vm.yahtzeeObject["Large Street"] && !_vm.settedValue
+            },
+            style: _vm.setColor("Large Street"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Large Street"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Large Street")
+              },
+              mouseover: function($event) {
+                _vm.yahtzeeObject["Large Street"]
+                  ? null
+                  : _vm.street >= 4
+                  ? 40
+                  : (_vm.hoverLargeStreet = "0")
+              },
+              mouseleave: function($event) {
+                _vm.hoverLargeStreet = ""
+              }
+            }
+          },
+          [
+            _vm._v(
+              _vm._s(
+                _vm.hoverLargeStreet
+                  ? _vm.hoverLargeStreet
+                  : _vm.yahtzeeObject["Large Street"]
+                  ? _vm.yahtzeeObject["Large Street"]
+                  : _vm.street >= 4
+                  ? 40
+                  : "."
+              )
+            )
+          ]
+        )
       ])
     ]),
     _vm._v(" "),
@@ -38684,9 +39173,44 @@ var render = function() {
       _vm._m(11),
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
-        _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s(_vm.counter[6] * 6 || "."))
-        ])
+        _c(
+          "p",
+          {
+            staticClass: "mb-0 text-center font-weight-bold brdr",
+            class: { hoverme: !_vm.yahtzeeObject["Sixes"] && !_vm.settedValue },
+            style: _vm.setColor("Sixes"),
+            on: {
+              click: function($event) {
+                _vm.yahtzeeObject["Sixes"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Sixes")
+              },
+              mouseover: function($event) {
+                _vm.yahtzeeObject["Sixes"]
+                  ? null
+                  : _vm.counter[6]
+                  ? _vm.counter[6] * 6
+                  : (_vm.hoverSixes = "0")
+              },
+              mouseleave: function($event) {
+                _vm.hoverSixes = ""
+              }
+            }
+          },
+          [
+            _vm._v(
+              _vm._s(
+                _vm.hoverSixes
+                  ? _vm.hoverSixes
+                  : _vm.yahtzeeObject["Sixes"]
+                  ? _vm.yahtzeeObject["Sixes"]
+                  : _vm.counter[6]
+                  ? _vm.counter[6] * 6
+                  : "."
+              )
+            )
+          ]
+        )
       ]),
       _vm._v(" "),
       _vm._m(12),
@@ -38696,29 +39220,33 @@ var render = function() {
           "p",
           {
             staticClass: "mb-0 text-center font-weight-bold",
-            class: { hoverme: !_vm.yahtzeeObject["Yahtzee"] },
+            class: {
+              hoverme: !_vm.yahtzeeObject["Yahtzee"] && !_vm.settedValue
+            },
             style: _vm.setColor("Yahtzee"),
             on: {
               click: function($event) {
-                _vm.yahtzeeObject["Yahtzee"] ? null : _vm.setVal("Yahtzee")
+                _vm.yahtzeeObject["Yahtzee"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Yahtzee")
               },
               mouseover: function($event) {
                 _vm.yahtzeeObject["Yahtzee"]
                   ? null
                   : _vm.yahtzee
                   ? _vm.yahtzee
-                  : (_vm.hoverYaht = "0")
+                  : (_vm.hoverYahtzee = "0")
               },
               mouseleave: function($event) {
-                _vm.hoverYaht = ""
+                _vm.hoverYahtzee = ""
               }
             }
           },
           [
             _vm._v(
               _vm._s(
-                _vm.hoverYaht
-                  ? _vm.hoverYaht
+                _vm.hoverYahtzee
+                  ? _vm.hoverYahtzee
                   : _vm.yahtzeeObject["Yahtzee"]
                   ? _vm.yahtzeeObject["Yahtzee"]
                   : _vm.yahtzee
@@ -38738,7 +39266,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "col-3" }, [
         _c("p", { staticClass: "mb-0 text-center font-weight-bold brdr" }, [
-          _vm._v(_vm._s("."))
+          _vm._v(_vm._s(_vm.sectionBonus ? _vm.sectionBonus : "."))
         ])
       ]),
       _vm._v(" "),
@@ -38749,11 +39277,15 @@ var render = function() {
           "p",
           {
             staticClass: "mb-0 text-center font-weight-bold",
-            class: { hoverme: !_vm.yahtzeeObject["Chance"] },
+            class: {
+              hoverme: !_vm.yahtzeeObject["Chance"] && !_vm.settedValue
+            },
             style: _vm.setColor("Chance"),
             on: {
               click: function($event) {
-                _vm.yahtzeeObject["Chance"] ? null : _vm.setVal("Chance")
+                _vm.yahtzeeObject["Chance"] || _vm.settedValue
+                  ? null
+                  : _vm.setVal("Chance")
               }
             }
           },
@@ -38763,6 +39295,8 @@ var render = function() {
                 _vm.yahtzeeObject["Chance"]
                   ? _vm.yahtzeeObject["Chance"]
                   : _vm.chance
+                  ? _vm.chance
+                  : "."
               )
             )
           ]
@@ -51705,8 +52239,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Laragon\www\lara-vue-yahtzee\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\Laragon\www\lara-vue-yahtzee\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Laragon\www\Yahtzee-Vue\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Laragon\www\Yahtzee-Vue\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
