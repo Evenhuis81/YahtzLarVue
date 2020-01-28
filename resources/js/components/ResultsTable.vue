@@ -4,16 +4,29 @@
       <div class="col-6">
         <h5 class="mb-0 text-center font-weight-bold">Player 1</h5>
       </div>
+      <!-- speler 2 bestaat niet? -->
       <div class="col-6">
         <h5 class="mb-0 text-center font-weight-bold">Player 2/Computer</h5>
       </div>
     </div>
     <hr class="hr my-0" />
     <div class="row align-items-center bgrz">
-      <div class="col-3">
+      <!-- <div class="col-3">
         <p class="mb-0 text-center font-weight-bold">Ones</p>
+      </div> -->
+      <!-- stop alle combinatietypes (ones, twos, etc.) in een array van objecten. Elk object heeft bijv. de properties name en score. Itereer met v-for
+        door dit array. Dit scheelt veel code! -->
+      <div v-for="(combination, index) in combinations" :key="index" class="col-3" style="background-color: white">
+        <p 
+          class="mb-0 text-center font-weight-bold brdr" 
+          @click="lockCombination(combination)"
+          :class="{ combinationLocked: combination.locked }">
+            {{ combination.name }}: {{ combination.toString() }}
+        </p>
+        <hr class="hr2 my-0" />
       </div>
-      <div class="col-3">
+      
+      <!-- <div class="col-3">
         <p
           class="mb-0 text-center font-weight-bold brdr"
           :class="{ hoverme: !yahtzeeObject['Ones'] && !settedValue }"
@@ -211,14 +224,28 @@
         <h4
           class="mb-0 text-center"
           style="color: white; border-left: 3px solid red;"
-        >{{ totalSettedValue ? totalSettedValue : "." }}</h4>
+        {{ totalSettedValue ? totalSettedValue : "." }}</h4> -->
         <!-- if roundnr != 0 then show 0 instead of . -->
-      </div>
+      <!--</div> -->
     </div>
   </div>
 </template>
 
 <script>
+
+class Combination {
+  constructor(name, currentScore) {
+    this.name = name;
+    this.score = 0;
+    this.locked = false;
+    this.currentScore = currentScore;
+  }
+
+  toString() {
+    return this.locked ? this.score : this.currentScore();
+  }
+}
+
 export default {
   props: {
     dice: {
@@ -229,37 +256,38 @@ export default {
   data() {
     return {
       settedValue: false,
-      hoverYahtzee: "",
-      hoverThreeOfAKind: "",
-      hoverFourOfAKind: "",
-      hoverFullHouse: "",
-      hoverSmallStreet: "",
-      hoverLargeStreet: "",
-      hoverSixes: "",
-      hoverFives: "",
-      hoverFours: "",
-      hoverThrees: "",
-      hoverTwos: "",
-      hoverOnes: "",
-      yahtzeeArray: [
-        "Ones",
-        "Twos",
-        "Threes",
-        "Fours",
-        "Fives",
-        "Sixes",
-        "Three of a Kind",
-        "Four of a Kind",
-        "Full House",
-        "Small Street",
-        "Large Street",
-        "Yahtzee",
-        "Chance",
-        "Section Bonus (+35%)"
-      ],
-      yahtzeeObject: {},
-      settedColor: "black",
-      defaultColor: "red"
+      // hoverYahtzee: "",
+      // hoverThreeOfAKind: "",
+      // hoverFourOfAKind: "",
+      // hoverFullHouse: "",
+      // hoverSmallStreet: "",
+      // hoverLargeStreet: "",
+      // hoverSixes: "",
+      // hoverFives: "",
+      // hoverFours: "",
+      // hoverThrees: "",
+      // hoverTwos: "",
+      // hoverOnes: "",
+      combinations: [],
+      // yahtzeeArray: [
+      //   "Ones",
+      //   "Twos",
+      //   "Threes",
+      //   "Fours",
+      //   "Fives",
+      //   "Sixes",
+      //   "Three of a Kind",
+      //   "Four of a Kind",
+      //   "Full House",
+      //   "Small Street",
+      //   "Large Street",
+      //   "Yahtzee",
+      //   "Chance",
+      //   "Section Bonus (+35%)"
+      // ],
+      // yahtzeeObject: {},
+      // settedColor: "black",
+      // defaultColor: "red"
     };
   },
   computed: {
@@ -354,69 +382,92 @@ export default {
     }
   },
   methods: {
-    setColor(para) {
-      return {
-        color: this.yahtzeeObject[para] ? this.settedColor : this.defaultColor
-      };
-    },
-    setVal(para) {
-      if (para == "Chance") {
-        this.chance
-          ? (this.yahtzeeObject[para] = this.chance)
-          : (this.yahtzeeObject[para] = "0");
-      } else if (para == "Yahtzee") {
-        this.yahtzee
-          ? (this.yahtzeeObject[para] = 50)
-          : (this.yahtzeeObject[para] = "0");
-      } else if (para == "Sixes") {
-        this.counter[6]
-          ? (this.yahtzeeObject[para] = this.counter[6] * 6)
-          : (this.yahtzeeObject[para] = "0");
-      } else if (para == "Fives") {
-        this.counter[5]
-          ? (this.yahtzeeObject[para] = this.counter[5] * 5)
-          : (this.yahtzeeObject[para] = "0");
-      } else if (para == "Fours") {
-        this.counter[4]
-          ? (this.yahtzeeObject[para] = this.counter[4] * 4)
-          : (this.yahtzeeObject[para] = "0");
-      } else if (para == "Threes") {
-        this.counter[3]
-          ? (this.yahtzeeObject[para] = this.counter[3] * 3)
-          : (this.yahtzeeObject[para] = "0");
-      } else if (para == "Twos") {
-        this.counter[2]
-          ? (this.yahtzeeObject[para] = this.counter[2] * 2)
-          : (this.yahtzeeObject[para] = "0");
-      } else if (para == "Ones") {
-        this.counter[1]
-          ? (this.yahtzeeObject[para] = this.counter[1])
-          : (this.yahtzeeObject[para] = "0");
-      } else if (para == "Three of a Kind") {
-        this.threeOfAKind
-          ? (this.yahtzeeObject[para] = this.threeOfAKind)
-          : (this.yahtzeeObject[para] = "0");
-      } else if (para == "Large Street") {
-        this.street >= 4
-          ? (this.yahtzeeObject[para] = 40)
-          : (this.yahtzeeObject[para] = "0");
-      } else if (para == "Small Street") {
-        this.street >= 3
-          ? (this.yahtzeeObject[para] = 30)
-          : (this.yahtzeeObject[para] = "0");
-      } else if (para == "Full House") {
-        this.fullHouse
-          ? (this.yahtzeeObject[para] = this.fullHouse)
-          : (this.yahtzeeObject[para] = "0");
-      }
+    // setColor(para) {
+    //   return {
+    //     color: this.yahtzeeObject[para] ? this.settedColor : this.defaultColor
+    //   };
+    // },
+    lockCombination(combination) {
+      if(!combination.locked) {
+        combination.score = combination.currentScore();
+        combination.locked = true;
 
-      this.settedValue = true;
-      this.$emit("valueSetted");
-      // alert(this.hover + para);
-    }
+        this.settedValue = true;
+        this.$emit("valueSetted");
+      }
+    },
+
+    // kies duidelijke:
+    // * functienaam. 'setVal' is een erg algemene naam. Suggestie: lockCombination
+    // * parameter naam. 'para' zegt niets over inhoud parameter. Suggestie: combination
+    // setVal(para) {
+    //   // kan ook in switch blok i.p.v. if/else
+    //   if (para == "Chance") {
+    //     this.chance
+    //       ? (this.yahtzeeObject[para] = this.chance)
+    //       : (this.yahtzeeObject[para] = "0");
+    //   } else if (para == "Yahtzee") {
+    //     this.yahtzee
+    //       ? (this.yahtzeeObject[para] = 50)
+    //       : (this.yahtzeeObject[para] = "0");
+    //   } else if (para == "Sixes") {
+    //     this.counter[6]
+    //       ? (this.yahtzeeObject[para] = this.counter[6] * 6)
+    //       : (this.yahtzeeObject[para] = "0");
+    //   } else if (para == "Fives") {
+    //     this.counter[5]
+    //       ? (this.yahtzeeObject[para] = this.counter[5] * 5)
+    //       : (this.yahtzeeObject[para] = "0");
+    //   } else if (para == "Fours") {
+    //     this.counter[4]
+    //       ? (this.yahtzeeObject[para] = this.counter[4] * 4)
+    //       : (this.yahtzeeObject[para] = "0");
+    //   } else if (para == "Threes") {
+    //     this.counter[3]
+    //       ? (this.yahtzeeObject[para] = this.counter[3] * 3)
+    //       : (this.yahtzeeObject[para] = "0");
+    //   } else if (para == "Twos") {
+    //     this.counter[2]
+    //       ? (this.yahtzeeObject[para] = this.counter[2] * 2)
+    //       : (this.yahtzeeObject[para] = "0");
+    //   } else if (para == "Ones") {
+    //     this.counter[1]
+    //       ? (this.yahtzeeObject[para] = this.counter[1])
+    //       : (this.yahtzeeObject[para] = "0");
+    //   } else if (para == "Three of a Kind") {
+    //     this.threeOfAKind
+    //       ? (this.yahtzeeObject[para] = this.threeOfAKind)
+    //       : (this.yahtzeeObject[para] = "0");
+    //   } else if (para == "Large Street") {
+    //     this.street >= 4
+    //       ? (this.yahtzeeObject[para] = 40)
+    //       : (this.yahtzeeObject[para] = "0");
+    //   } else if (para == "Small Street") {
+    //     this.street >= 3
+    //       ? (this.yahtzeeObject[para] = 30)
+    //       : (this.yahtzeeObject[para] = "0");
+    //   } else if (para == "Full House") {
+    //     this.fullHouse
+    //       ? (this.yahtzeeObject[para] = this.fullHouse)
+    //       : (this.yahtzeeObject[para] = "0");
+    //   }
+
+    //   this.settedValue = true;
+    //   this.$emit("valueSetted");
+    //   // alert(this.hover + para);
+    // }
   },
   mounted() {
-    this.yahtzeeObject = this.createY;
+    //this.yahtzeeObject = this.createY;
+    this.combinations.push(new Combination("Ones", () => { return this.dice.filter(x => x==1).length }));
+    this.combinations.push(new Combination("Twos", () => { return this.dice.filter(x => x==2).length*2 }));
+    this.combinations.push(new Combination("Threes", () => { return this.dice.filter(x => x==3).length*3 }));
+    this.combinations.push(new Combination("Fours", () => { return this.dice.filter(x => x==4).length*4 }));
+    this.combinations.push(new Combination("Fives", () => { return this.dice.filter(x => x==5).length*5 }));
+    this.combinations.push(new Combination("Sixes", () => { return this.dice.filter(x => x==6).length*6 }));
+    this.combinations.push(new Combination("Sixes", () => { return this.dice.filter(x => x==6).length*6 }));
+    this.combinations.push(new Combination("Three of a Kind", () => { return this.threeOfAKind }));
+    // voeg overige combinaties zelf verder toe ...
   },
   watch: {
     dice: function(newValue) {
@@ -427,6 +478,10 @@ export default {
 </script>
 
 <style scoped>
+.combinationLocked {
+  color: red;
+}
+
 .hoverme:hover {
   border: 2px solid black;
   cursor: pointer;

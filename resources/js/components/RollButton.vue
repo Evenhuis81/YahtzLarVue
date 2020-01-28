@@ -49,11 +49,12 @@ export default {
   },
   methods: {
     // For testing
-    rollDice2() {
-      this.diceData = [];
-      this.diceData.push(4, 3, 2, 2, 1);
-      this.$emit("diceToParent", this.diceData);
-    },
+    // ongebruikte code uit-commentariseren of geheel verwijderen
+    // rollDice2() {
+    //   this.diceData = [];
+    //   this.diceData.push(4, 3, 2, 2, 1);
+    //   this.$emit("diceToParent", this.diceData);
+    // },
     rollDice() {
       const arr = [...this.diceData];
       this.diceData = [];
