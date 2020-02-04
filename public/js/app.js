@@ -2137,6 +2137,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 //
 //
 //
+//
+//
+//
+//
 var Combination =
 /*#__PURE__*/
 function () {
@@ -2240,14 +2244,7 @@ function () {
         return acc;
       }, {});
     },
-    threeOfAKind: function threeOfAKind() {
-      for (var key in this.counter) {
-        if (this.counter[key] >= 3) {
-          return this.chance;
-        }
-      }
-
-      return null;
+    threeOfAKind: function threeOfAKind() {//
     },
     fourOfAKind: function fourOfAKind() {
       for (var key in this.counter) {
@@ -2256,47 +2253,13 @@ function () {
         }
       }
 
-      return null;
+      return 0;
     },
-    yahtzee: function yahtzee() {
-      for (var key in this.counter) {
-        if (this.counter[key] === 5) {
-          return true;
-        }
-      }
-
-      return null;
+    yahtzee: function yahtzee() {//
     },
-    fullHouse: function fullHouse() {
-      for (var key in this.counter) {
-        if (this.counter[key] === 3) {
-          for (var _key in this.counter) {
-            if (this.counter[_key] === 2) {
-              return 25;
-            }
-          }
-        }
-      }
-
-      return null;
+    fullHouse: function fullHouse() {//
     },
-    street: function street() {
-      var maxS = 0;
-
-      var arr = _toConsumableArray(this.dice).sort();
-
-      var sorted = _toConsumableArray(new Set(arr));
-
-      for (var i = 0; i < sorted.length - 1; i++) {
-        var firstDie = sorted[i];
-        var secondDie = sorted[i + 1];
-
-        if (firstDie === secondDie - 1) {
-          maxS++;
-        }
-      }
-
-      return maxS;
+    street: function street() {//
     },
     chance: function chance() {
       if (this.dice.length) {
@@ -2421,7 +2384,62 @@ function () {
       }).length * 6;
     }));
     this.combinations.push(new Combination("Three of a Kind", function () {
-      return _this2.threeOfAKind;
+      for (var key in _this2.counter) {
+        if (_this2.counter[key] >= 3) {
+          return _this2.chance;
+        }
+      }
+
+      return 0;
+    }));
+    this.combinations.push(new Combination("Four of a Kind", function () {
+      for (var key in _this2.counter) {
+        if (_this2.counter[key] >= 4) {
+          return _this2.chance;
+        }
+      }
+
+      return 0;
+    }));
+    this.combinations.push(new Combination("Yahtzee", function () {
+      for (var key in _this2.counter) {
+        if (_this2.counter[key] === 5) {
+          return 50;
+        }
+      }
+
+      return 0;
+    }));
+    this.combinations.push(new Combination("Full House", function () {
+      for (var key in _this2.counter) {
+        if (_this2.counter[key] === 3) {
+          for (var _key in _this2.counter) {
+            if (_this2.counter[_key] === 2) {
+              return 25;
+            }
+          }
+        }
+      }
+
+      return 0;
+    }));
+    this.combinations.push(new Combination("Full House", function () {
+      var maxS = 0;
+
+      var arr = _toConsumableArray(_this2.dice).sort();
+
+      var sorted = _toConsumableArray(new Set(arr));
+
+      for (var i = 0; i < sorted.length - 1; i++) {
+        var firstDie = sorted[i];
+        var secondDie = sorted[i + 1];
+
+        if (firstDie === secondDie - 1) {
+          maxS++;
+        }
+      }
+
+      return maxS;
     })); // voeg overige combinaties zelf verder toe ...
   },
   watch: {
@@ -7220,7 +7238,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.disabledButton[data-v-26d38f3a] {\n  opacity: 0.9;\n}\n", ""]);
+exports.push([module.i, "\n.disabledButton[data-v-26d38f3a] {\r\n  opacity: 0.9;\n}\r\n", ""]);
 
 // exports
 
@@ -38860,17 +38878,15 @@ var render = function() {
                 class: { combinationLocked: combination.locked },
                 on: {
                   click: function($event) {
-                    return _vm.lockCombination(combination)
+                    !_vm.settedValue ? _vm.lockCombination(combination) : false
                   }
                 }
               },
               [
                 _vm._v(
-                  "\n          " +
-                    _vm._s(combination.name) +
+                  _vm._s(combination.name) +
                     ": " +
-                    _vm._s(combination.toString()) +
-                    "\n      "
+                    _vm._s(combination.toString())
                 )
               ]
             ),
@@ -39011,7 +39027,7 @@ var render = function() {
   return _c(
     "div",
     {
-      staticClass: "container text-center w-25 mt-2 px-0",
+      staticClass: "container text-center w-25 mt-5 px-0",
       style: _vm.diceShow
     },
     _vm._l(_vm.dice, function(die, index) {
@@ -51638,8 +51654,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/j.postema/code/laravel/YahtzLarVue/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Users/j.postema/code/laravel/YahtzLarVue/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Laragon\www\YahtzLarVue\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Laragon\www\YahtzLarVue\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

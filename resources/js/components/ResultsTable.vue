@@ -13,19 +13,10 @@
     <div class="row align-items-center bgrz">
       <!-- <div class="col-3">
         <p class="mb-0 text-center font-weight-bold">Ones</p>
-      </div> -->
+      </div>-->
       <!-- stop alle combinatietypes (ones, twos, etc.) in een array van objecten. Elk object heeft bijv. de properties name en score. Itereer met v-for
-        door dit array. Dit scheelt veel code! -->
-      <div v-for="(combination, index) in combinations" :key="index" class="col-3" style="background-color: white">
-        <p 
-          class="mb-0 text-center font-weight-bold brdr" 
-          @click="lockCombination(combination)"
-          :class="{ combinationLocked: combination.locked }">
-            {{ combination.name }}: {{ combination.toString() }}
-        </p>
-        <hr class="hr2 my-0" />
-      </div>
-      
+      door dit array. Dit scheelt veel code!-->
+
       <!-- <div class="col-3">
         <p
           class="mb-0 text-center font-weight-bold brdr"
@@ -224,15 +215,27 @@
         <h4
           class="mb-0 text-center"
           style="color: white; border-left: 3px solid red;"
-        {{ totalSettedValue ? totalSettedValue : "." }}</h4> -->
-        <!-- if roundnr != 0 then show 0 instead of . -->
+      {{ totalSettedValue ? totalSettedValue : "." }}</h4>-->
+      <!-- if roundnr != 0 then show 0 instead of . -->
       <!--</div> -->
+      <div
+        v-for="(combination, index) in combinations"
+        :key="index"
+        class="col-3"
+        style="background-color: white"
+      >
+        <p
+          class="mb-0 text-center font-weight-bold brdr"
+          @click="!settedValue ? lockCombination(combination) : false"
+          :class="{ combinationLocked: combination.locked }"
+        >{{ combination.name }}: {{ combination.toString() }}</p>
+        <hr class="hr2 my-0" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-
 class Combination {
   constructor(name, currentScore) {
     this.name = name;
@@ -268,7 +271,7 @@ export default {
       // hoverThrees: "",
       // hoverTwos: "",
       // hoverOnes: "",
-      combinations: [],
+      combinations: []
       // yahtzeeArray: [
       //   "Ones",
       //   "Twos",
@@ -325,12 +328,7 @@ export default {
       }, {});
     },
     threeOfAKind() {
-      for (let key in this.counter) {
-        if (this.counter[key] >= 3) {
-          return this.chance;
-        }
-      }
-      return null;
+      //
     },
     fourOfAKind() {
       for (let key in this.counter) {
@@ -338,40 +336,16 @@ export default {
           return this.chance;
         }
       }
-      return null;
+      return 0;
     },
     yahtzee() {
-      for (let key in this.counter) {
-        if (this.counter[key] === 5) {
-          return true;
-        }
-      }
-      return null;
+      //
     },
     fullHouse() {
-      for (let key in this.counter) {
-        if (this.counter[key] === 3) {
-          for (let key in this.counter) {
-            if (this.counter[key] === 2) {
-              return 25;
-            }
-          }
-        }
-      }
-      return null;
+      //
     },
     street() {
-      let maxS = 0;
-      const arr = [...this.dice].sort();
-      let sorted = [...new Set(arr)];
-      for (let i = 0; i < sorted.length - 1; i++) {
-        const firstDie = sorted[i];
-        const secondDie = sorted[i + 1];
-        if (firstDie === secondDie - 1) {
-          maxS++;
-        }
-      }
-      return maxS;
+      //
     },
     chance() {
       if (this.dice.length) {
@@ -388,14 +362,14 @@ export default {
     //   };
     // },
     lockCombination(combination) {
-      if(!combination.locked) {
+      if (!combination.locked) {
         combination.score = combination.currentScore();
         combination.locked = true;
 
         this.settedValue = true;
         this.$emit("valueSetted");
       }
-    },
+    }
 
     // kies duidelijke:
     // * functienaam. 'setVal' is een erg algemene naam. Suggestie: lockCombination
@@ -459,14 +433,100 @@ export default {
   },
   mounted() {
     //this.yahtzeeObject = this.createY;
-    this.combinations.push(new Combination("Ones", () => { return this.dice.filter(x => x==1).length }));
-    this.combinations.push(new Combination("Twos", () => { return this.dice.filter(x => x==2).length*2 }));
-    this.combinations.push(new Combination("Threes", () => { return this.dice.filter(x => x==3).length*3 }));
-    this.combinations.push(new Combination("Fours", () => { return this.dice.filter(x => x==4).length*4 }));
-    this.combinations.push(new Combination("Fives", () => { return this.dice.filter(x => x==5).length*5 }));
-    this.combinations.push(new Combination("Sixes", () => { return this.dice.filter(x => x==6).length*6 }));
-    this.combinations.push(new Combination("Sixes", () => { return this.dice.filter(x => x==6).length*6 }));
-    this.combinations.push(new Combination("Three of a Kind", () => { return this.threeOfAKind }));
+    this.combinations.push(
+      new Combination("Ones", () => {
+        return this.dice.filter(x => x == 1).length;
+      })
+    );
+    this.combinations.push(
+      new Combination("Twos", () => {
+        return this.dice.filter(x => x == 2).length * 2;
+      })
+    );
+    this.combinations.push(
+      new Combination("Threes", () => {
+        return this.dice.filter(x => x == 3).length * 3;
+      })
+    );
+    this.combinations.push(
+      new Combination("Fours", () => {
+        return this.dice.filter(x => x == 4).length * 4;
+      })
+    );
+    this.combinations.push(
+      new Combination("Fives", () => {
+        return this.dice.filter(x => x == 5).length * 5;
+      })
+    );
+    this.combinations.push(
+      new Combination("Sixes", () => {
+        return this.dice.filter(x => x == 6).length * 6;
+      })
+    );
+    this.combinations.push(
+      new Combination("Sixes", () => {
+        return this.dice.filter(x => x == 6).length * 6;
+      })
+    );
+    this.combinations.push(
+      new Combination("Three of a Kind", () => {
+        for (let key in this.counter) {
+          if (this.counter[key] >= 3) {
+            return this.chance;
+          }
+        }
+        return 0;
+      })
+    );
+    this.combinations.push(
+      new Combination("Four of a Kind", () => {
+        for (let key in this.counter) {
+          if (this.counter[key] >= 4) {
+            return this.chance;
+          }
+        }
+        return 0;
+      })
+    );
+    this.combinations.push(
+      new Combination("Yahtzee", () => {
+        for (let key in this.counter) {
+          if (this.counter[key] === 5) {
+            return 50;
+          }
+        }
+        return 0;
+      })
+    );
+    this.combinations.push(
+      new Combination("Full House", () => {
+        for (let key in this.counter) {
+          if (this.counter[key] === 3) {
+            for (let key in this.counter) {
+              if (this.counter[key] === 2) {
+                return 25;
+              }
+            }
+          }
+        }
+        return 0;
+      })
+    );
+    this.combinations.push(
+      new Combination("Full House", () => {
+        let maxS = 0;
+        const arr = [...this.dice].sort();
+        let sorted = [...new Set(arr)];
+        for (let i = 0; i < sorted.length - 1; i++) {
+          const firstDie = sorted[i];
+          const secondDie = sorted[i + 1];
+          if (firstDie === secondDie - 1) {
+            maxS++;
+          }
+        }
+        return maxS;
+      })
+    );
     // voeg overige combinaties zelf verder toe ...
   },
   watch: {

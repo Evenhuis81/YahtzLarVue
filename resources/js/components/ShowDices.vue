@@ -1,5 +1,5 @@
 <template>
-  <div class="container text-center w-25 mt-2 px-0" :style="diceShow">
+  <div class="container text-center w-25 mt-5 px-0" :style="diceShow">
     <!-- eslint-disable-next-line -->
     <span
       class="rolledDice"
