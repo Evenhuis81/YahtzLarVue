@@ -1,6 +1,5 @@
 <template>
-  <div class="container text-center w-25 mt-5 px-0" :style="diceShow">
-    <!-- eslint-disable-next-line -->
+  <div class="container text-center w-25 px-0" :style="diceShow">
     <span
       class="rolledDice"
       id="dice"
@@ -8,7 +7,7 @@
       :key="index"
       v-html="getHexCodeDice(die)"
       @click="setDice(index)"
-      :style="settedDice(index)"
+      :style="[settedDice(index)]"
     ></span>
   </div>
 </template>
@@ -29,7 +28,8 @@ export default {
   computed: {
     diceShow() {
       return {
-        height: "153px",
+        marginTop: '100px',
+        height: "150px",
         background: "white",
         opacity: this.dice.length ? 0.9 : 0
       };
@@ -72,8 +72,12 @@ export default {
 </script>
 
 <style>
+.rolledDice {
+  padding: 4px;
+}
 .rolledDice:hover {
-  border: 2px solid red;
+  border: 4px solid black;
+  padding: 0px;
 }
 .diceshow {
   opacity: 0.9;

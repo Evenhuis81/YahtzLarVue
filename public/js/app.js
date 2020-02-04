@@ -1935,222 +1935,17 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 var Combination =
 /*#__PURE__*/
 function () {
-  function Combination(name, currentScore) {
+  function Combination(name, currentScore, clickable, locked) {
     _classCallCheck(this, Combination);
 
     this.name = name;
     this.score = 0;
-    this.locked = false;
+    this.locked = !!locked;
     this.currentScore = currentScore;
+    this.clickable = !clickable;
   }
 
   _createClass(Combination, [{
@@ -2172,71 +1967,40 @@ function () {
   },
   data: function data() {
     return {
-      settedValue: false,
-      // hoverYahtzee: "",
-      // hoverThreeOfAKind: "",
-      // hoverFourOfAKind: "",
-      // hoverFullHouse: "",
-      // hoverSmallStreet: "",
-      // hoverLargeStreet: "",
-      // hoverSixes: "",
-      // hoverFives: "",
-      // hoverFours: "",
-      // hoverThrees: "",
-      // hoverTwos: "",
-      // hoverOnes: "",
-      combinations: [] // yahtzeeArray: [
-      //   "Ones",
-      //   "Twos",
-      //   "Threes",
-      //   "Fours",
-      //   "Fives",
-      //   "Sixes",
-      //   "Three of a Kind",
-      //   "Four of a Kind",
-      //   "Full House",
-      //   "Small Street",
-      //   "Large Street",
-      //   "Yahtzee",
-      //   "Chance",
-      //   "Section Bonus (+35%)"
-      // ],
-      // yahtzeeObject: {},
-      // settedColor: "black",
-      // defaultColor: "red"
-
+      unsettedScoreStyle: {
+        color: "green"
+      },
+      settedValue: true,
+      combinations: []
     };
   },
   computed: {
     sectionBonus: function sectionBonus() {
       var sectionTotal = 0;
-      var sectionKeys = Object.keys(this.yahtzeeObject); // alert(sectionKeys);
+      var sectionKeys = Object.keys(this.combinations); // alert(sectionKeys);
 
       for (var index = 0; index < 6; index++) {
-        if (this.yahtzeeObject[sectionKeys[index]] != "0") {
-          sectionTotal += this.yahtzeeObject[sectionKeys[index]];
-        }
-      }
+        sectionTotal += this.combinations[sectionKeys[index]];
+      } // console.log(sectionTotal)
 
-      return sectionTotal;
+
+      return sectionTotal > 62 ? 35 : 0;
     },
     totalSettedValue: function totalSettedValue() {
       var _this = this;
 
       var total = 0;
-      Object.keys(this.yahtzeeObject).forEach(function (key) {
-        if (_this.yahtzeeObject[key] != "0") {
-          total += _this.yahtzeeObject[key];
-        }
+      Object.keys(this.combinations).forEach(function (key) {
+        total += _this.combinations[key].score;
       });
       return total;
     },
-    createY: function createY() {
-      return this.yahtzeeArray.reduce(function (acc, elem) {
-        acc[elem] = null;
-        return acc;
-      }, {});
-    },
+    // createY() {
+    //   return this.yahtzeeArray.reduce((acc, elem) => {
+    //     acc[elem] = null;
+    //     return acc;
+    //   }, {});
+    // },
     counter: function counter() {
       return this.dice.reduce(function (acc, die) {
         if (!acc[die]) acc[die] = 0;
@@ -2244,39 +2008,67 @@ function () {
         return acc;
       }, {});
     },
-    threeOfAKind: function threeOfAKind() {//
-    },
-    fourOfAKind: function fourOfAKind() {
-      for (var key in this.counter) {
-        if (this.counter[key] >= 4) {
-          return this.chance;
-        }
-      }
-
-      return 0;
-    },
-    yahtzee: function yahtzee() {//
-    },
-    fullHouse: function fullHouse() {//
-    },
-    street: function street() {//
-    },
     chance: function chance() {
       if (this.dice.length) {
         return this.dice.reduce(function (acc, die) {
           return acc + die;
         });
       } else {
-        return null;
+        return 0;
       }
+    },
+    streets: function streets() {
+      var maxS = 0;
+
+      var arr = _toConsumableArray(this.dice).sort();
+
+      var sorted = _toConsumableArray(new Set(arr));
+
+      for (var i = 0; i < sorted.length - 1; i++) {
+        var firstDie = sorted[i];
+        var secondDie = sorted[i + 1];
+
+        if (firstDie === secondDie - 1) {
+          maxS++;
+        }
+      }
+
+      return maxS;
     }
   },
   methods: {
-    // setColor(para) {
-    //   return {
-    //     color: this.yahtzeeObject[para] ? this.settedColor : this.defaultColor
-    //   };
-    // },
+    buttonStyles: function buttonStyles(combination) {
+      return {
+        combinationLocked: this.showLockedCombination(combination),
+        onHoverCombination: this.showLockedCombinationOnHover(combination)
+      };
+    },
+    clickActive: function clickActive(combination) {
+      if (combination.name === 'Section Bonus' || combination.name === 'Total Score') {
+        return;
+      }
+
+      this.lockCombination(combination); // console.log('true')
+      // return true;
+    },
+    showLockedCombination: function showLockedCombination(combination) {
+      if (combination.locked && combination.clickable) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    showLockedCombinationOnHover: function showLockedCombinationOnHover(combination) {
+      return !combination.locked && !this.settedValue;
+    },
+    // combination.locked && combination.clickable, onHoverCombination : !combination.locked && !settedValue
+    showGreen: function showGreen(combination) {
+      if (combination.currentScore() && !combination.locked && !this.settedValue) {
+        return this.unsettedScoreStyle;
+      }
+
+      return ''; // combination.currentScore() && !combination.locked && !settedValue ? unsettedScoreStyle : ''
+    },
     lockCombination: function lockCombination(combination) {
       if (!combination.locked) {
         combination.score = combination.currentScore();
@@ -2284,70 +2076,11 @@ function () {
         this.settedValue = true;
         this.$emit("valueSetted");
       }
-    } // kies duidelijke:
-    // * functienaam. 'setVal' is een erg algemene naam. Suggestie: lockCombination
-    // * parameter naam. 'para' zegt niets over inhoud parameter. Suggestie: combination
-    // setVal(para) {
-    //   // kan ook in switch blok i.p.v. if/else
-    //   if (para == "Chance") {
-    //     this.chance
-    //       ? (this.yahtzeeObject[para] = this.chance)
-    //       : (this.yahtzeeObject[para] = "0");
-    //   } else if (para == "Yahtzee") {
-    //     this.yahtzee
-    //       ? (this.yahtzeeObject[para] = 50)
-    //       : (this.yahtzeeObject[para] = "0");
-    //   } else if (para == "Sixes") {
-    //     this.counter[6]
-    //       ? (this.yahtzeeObject[para] = this.counter[6] * 6)
-    //       : (this.yahtzeeObject[para] = "0");
-    //   } else if (para == "Fives") {
-    //     this.counter[5]
-    //       ? (this.yahtzeeObject[para] = this.counter[5] * 5)
-    //       : (this.yahtzeeObject[para] = "0");
-    //   } else if (para == "Fours") {
-    //     this.counter[4]
-    //       ? (this.yahtzeeObject[para] = this.counter[4] * 4)
-    //       : (this.yahtzeeObject[para] = "0");
-    //   } else if (para == "Threes") {
-    //     this.counter[3]
-    //       ? (this.yahtzeeObject[para] = this.counter[3] * 3)
-    //       : (this.yahtzeeObject[para] = "0");
-    //   } else if (para == "Twos") {
-    //     this.counter[2]
-    //       ? (this.yahtzeeObject[para] = this.counter[2] * 2)
-    //       : (this.yahtzeeObject[para] = "0");
-    //   } else if (para == "Ones") {
-    //     this.counter[1]
-    //       ? (this.yahtzeeObject[para] = this.counter[1])
-    //       : (this.yahtzeeObject[para] = "0");
-    //   } else if (para == "Three of a Kind") {
-    //     this.threeOfAKind
-    //       ? (this.yahtzeeObject[para] = this.threeOfAKind)
-    //       : (this.yahtzeeObject[para] = "0");
-    //   } else if (para == "Large Street") {
-    //     this.street >= 4
-    //       ? (this.yahtzeeObject[para] = 40)
-    //       : (this.yahtzeeObject[para] = "0");
-    //   } else if (para == "Small Street") {
-    //     this.street >= 3
-    //       ? (this.yahtzeeObject[para] = 30)
-    //       : (this.yahtzeeObject[para] = "0");
-    //   } else if (para == "Full House") {
-    //     this.fullHouse
-    //       ? (this.yahtzeeObject[para] = this.fullHouse)
-    //       : (this.yahtzeeObject[para] = "0");
-    //   }
-    //   this.settedValue = true;
-    //   this.$emit("valueSetted");
-    //   // alert(this.hover + para);
-    // }
-
+    }
   },
   mounted: function mounted() {
     var _this2 = this;
 
-    //this.yahtzeeObject = this.createY;
     this.combinations.push(new Combination("Ones", function () {
       return _this2.dice.filter(function (x) {
         return x == 1;
@@ -2372,11 +2105,6 @@ function () {
       return _this2.dice.filter(function (x) {
         return x == 5;
       }).length * 5;
-    }));
-    this.combinations.push(new Combination("Sixes", function () {
-      return _this2.dice.filter(function (x) {
-        return x == 6;
-      }).length * 6;
     }));
     this.combinations.push(new Combination("Sixes", function () {
       return _this2.dice.filter(function (x) {
@@ -2423,24 +2151,21 @@ function () {
 
       return 0;
     }));
-    this.combinations.push(new Combination("Full House", function () {
-      var maxS = 0;
-
-      var arr = _toConsumableArray(_this2.dice).sort();
-
-      var sorted = _toConsumableArray(new Set(arr));
-
-      for (var i = 0; i < sorted.length - 1; i++) {
-        var firstDie = sorted[i];
-        var secondDie = sorted[i + 1];
-
-        if (firstDie === secondDie - 1) {
-          maxS++;
-        }
-      }
-
-      return maxS;
-    })); // voeg overige combinaties zelf verder toe ...
+    this.combinations.push(new Combination("Small Street", function () {
+      return _this2.streets >= 3 ? 30 : 0;
+    }));
+    this.combinations.push(new Combination("Large Street", function () {
+      return _this2.streets >= 4 ? 40 : 0;
+    }));
+    this.combinations.push(new Combination("Chance", function () {
+      return _this2.chance;
+    }));
+    this.combinations.push(new Combination("Section Bonus", function () {
+      return _this2.sectionBonus; // make non interactive
+    }, true, true));
+    this.combinations.push(new Combination("Total Score", function () {
+      return _this2.totalSettedValue; // make non interactive
+    }, true, true)); // voeg overige combinaties zelf verder toe ...
   },
   watch: {
     dice: function dice(newValue) {
@@ -2612,7 +2337,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     dice: {
@@ -2628,7 +2352,8 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     diceShow: function diceShow() {
       return {
-        height: "153px",
+        marginTop: '100px',
+        height: "150px",
         background: "white",
         opacity: this.dice.length ? 0.9 : 0
       };
@@ -7219,7 +6944,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.combinationLocked[data-v-3e511163] {\n  color: red;\n}\n.hoverme[data-v-3e511163]:hover {\n  border: 2px solid black;\n  cursor: pointer;\n}\n.content[data-v-3e511163] {\n  background: green;\n  opacity: 0.9;\n}\n.brdr[data-v-3e511163] {\n  border-right: 3px solid black;\n}\n.brdl[data-v-3e511163] {\n  border-left: 3px solid black;\n}\n.row[data-v-3e511163] {\n  height: 2rem;\n}\n.bgrz[data-v-3e511163] {\n  background: #ffcccb;\n}\n.hr[data-v-3e511163] {\n  background: black;\n  height: 3px;\n}\n.hr2[data-v-3e511163] {\n  background: black;\n  height: 1px;\n}\n.hr3[data-v-3e511163] {\n  background: black;\n  height: 2px;\n}\nh4[data-v-3e511163] {\n  color: red;\n}\nh5[data-v-3e511163] {\n  border-right: 2px solid black;\n  border-left: 2px solid black;\n}\n", ""]);
+exports.push([module.i, "\n.combinationLocked[data-v-3e511163] {\r\n    color: red;\n}\n.onHoverCombination[data-v-3e511163]:hover {\r\n  color: green;\r\n  cursor: pointer;\n}\n.hoverme[data-v-3e511163]:hover {\r\n    border: 2px solid black;\r\n    cursor: pointer;\n}\n.content[data-v-3e511163] {\r\n    background: green;\r\n    opacity: 0.9;\n}\n.brdr[data-v-3e511163] {\r\n    border-right: 3px solid black;\n}\n.brdl[data-v-3e511163] {\r\n    border-left: 3px solid black;\n}\n.row[data-v-3e511163] {\r\n    height: 2rem;\n}\n.bgrz[data-v-3e511163] {\r\n    background: #ffcccb;\n}\n.hr[data-v-3e511163] {\r\n    background: black;\r\n    height: 3px;\n}\n.hr2[data-v-3e511163] {\r\n    background: black;\r\n    height: 1px;\n}\n.hr3[data-v-3e511163] {\r\n    background: black;\r\n    height: 2px;\n}\nh4[data-v-3e511163] {\r\n    color: red;\n}\nh5[data-v-3e511163] {\r\n    border-right: 2px solid black;\r\n    border-left: 2px solid black;\n}\r\n", ""]);
 
 // exports
 
@@ -7257,7 +6982,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.rolledDice:hover {\n  border: 2px solid red;\n}\n.diceshow {\n  opacity: 0.9;\n}\n.visibleDice {\n  opacity: 0.9;\n}\n.invisibleDice {\n  opacity: 0;\n}\n#dice {\n  font-size: 6rem;\n}\n", ""]);
+exports.push([module.i, "\n.rolledDice {\r\n  padding: 4px;\n}\n.rolledDice:hover {\r\n  border: 4px solid black;\r\n  padding: 0px;\n}\n.diceshow {\r\n  opacity: 0.9;\n}\n.visibleDice {\r\n  opacity: 0.9;\n}\n.invisibleDice {\r\n  opacity: 0;\n}\n#dice {\r\n  font-size: 6rem;\n}\r\n", ""]);
 
 // exports
 
@@ -38854,49 +38579,50 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container h-100 w-50 content mt-5 px-0" }, [
-    _vm._m(0),
-    _vm._v(" "),
-    _c("hr", { staticClass: "hr my-0" }),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "row align-items-center bgrz" },
-      _vm._l(_vm.combinations, function(combination, index) {
-        return _c(
-          "div",
-          {
-            key: index,
-            staticClass: "col-3",
-            staticStyle: { "background-color": "white" }
-          },
-          [
-            _c(
-              "p",
-              {
-                staticClass: "mb-0 text-center font-weight-bold brdr",
-                class: { combinationLocked: combination.locked },
-                on: {
-                  click: function($event) {
-                    !_vm.settedValue ? _vm.lockCombination(combination) : false
+  return _c("div", [
+    _c("div", { staticClass: "container h-100 w-50 content mt-2 px-0" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("hr", { staticClass: "hr my-0" }),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "row align-items-center bgrz" },
+        _vm._l(_vm.combinations, function(combination, index) {
+          return _c(
+            "div",
+            {
+              key: index,
+              staticClass: "col-3",
+              staticStyle: { "background-color": "white" }
+            },
+            [
+              _c(
+                "p",
+                {
+                  staticClass: "mb-0 text-center font-weight-bold brdr",
+                  class: _vm.buttonStyles(combination),
+                  on: {
+                    click: function($event) {
+                      return _vm.clickActive(combination)
+                    }
                   }
-                }
-              },
-              [
-                _vm._v(
-                  _vm._s(combination.name) +
-                    ": " +
-                    _vm._s(combination.toString())
-                )
-              ]
-            ),
-            _vm._v(" "),
-            _c("hr", { staticClass: "hr2 my-0" })
-          ]
-        )
-      }),
-      0
-    )
+                },
+                [
+                  _vm._v(_vm._s(combination.name) + ": "),
+                  _c("span", { style: _vm.showGreen(combination) }, [
+                    _vm._v(_vm._s(combination.toString()))
+                  ])
+                ]
+              ),
+              _vm._v(" "),
+              _c("hr", { staticClass: "hr2 my-0" })
+            ]
+          )
+        }),
+        0
+      )
+    ])
   ])
 }
 var staticRenderFns = [
@@ -39026,15 +38752,12 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    {
-      staticClass: "container text-center w-25 mt-5 px-0",
-      style: _vm.diceShow
-    },
+    { staticClass: "container text-center w-25 px-0", style: _vm.diceShow },
     _vm._l(_vm.dice, function(die, index) {
       return _c("span", {
         key: index,
         staticClass: "rolledDice",
-        style: _vm.settedDice(index),
+        style: [_vm.settedDice(index)],
         attrs: { id: "dice" },
         domProps: { innerHTML: _vm._s(_vm.getHexCodeDice(die)) },
         on: {
@@ -51654,8 +51377,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Laragon\www\YahtzLarVue\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\Laragon\www\YahtzLarVue\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\laragon\www\YahtLarVue\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\YahtLarVue\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
